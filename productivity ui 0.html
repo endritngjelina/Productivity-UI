@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity UI Experiments Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #0a0a0a;
+            --secondary-bg: #1a1a1a;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --accent-red: #ff3333;
+            --accent-blue: #00d4ff;
+            --accent-green: #00ff88;
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, #1a1a2e 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .hero {
+            padding: 60px 0;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(255, 51, 51, 0.1) 0%, rgba(0, 212, 255, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow);
+            border-color: var(--accent-blue);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .experiments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            padding: 80px 40px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .experiment-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .experiment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-red), var(--accent-blue), var(--accent-green));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .experiment-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent-blue);
+        }
+
+        .experiment-card:hover::before {
+            opacity: 1;
+        }
+
+        .experiment-header {
+            padding: 30px;
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(135deg, var(--glass-bg), transparent);
+        }
+
+        .experiment-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .experiment-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .experiment-body {
+            padding: 30px;
+            min-height: 400px;
+        }
+
+        /* Modern Minimalist Todo */
+        .modern-todo {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2a2a2a 100%);
+        }
+
+        .todo-input {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .todo-input input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .todo-input input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+            border: none;
+            border-radius: 12px;
+            padding: 15px 25px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
+        }
+
+        .todo-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--border-color);
+            transform: translateX(10px);
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--accent-blue);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .todo-checkbox.completed {
+            background: var(--accent-blue);
+        }
+
+        .todo-checkbox.completed::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .todo-text.completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        /* Glassmorphism Calendar */
+        .glass-calendar {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .calendar-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent-blue);
+            transform: scale(1.1);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: var(--accent-blue);
+            transform: scale(1.1);
+        }
+
+        .calendar-day.today {
+            background: var(--accent-red);
+            color: white;
+            font-weight: 700;
+        }
+
+        .calendar-day.event::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: var(--accent-green);
+            border-radius: 50%;
+        }
+
+        /* Neon Reminder System */
+        .neon-reminders {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+        }
+
+        .reminder-input {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .reminder-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .reminder-input input,
+        .reminder-input select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .reminder-input input:focus,
+        .reminder-input select:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .priority-select {
+            min-width: 120px;
+        }
+
+        .reminder-item {
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 20px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reminder-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .reminder-item:hover::before {
+            transform: translateX(100%);
+        }
+
+        .reminder-high {
+            background: rgba(255, 51, 51, 0.1);
+            border-left-color: var(--accent-red);
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.2);
+        }
+
+        .reminder-medium {
+            background: rgba(255, 193, 7, 0.1);
+            border-left-color: #ffc107;
+        }
+
+        .reminder-low {
+            background: rgba(0, 255, 136, 0.1);
+            border-left-color: var(--accent-green);
+        }
+
+        .reminder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .reminder-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .reminder-time {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Kanban Board */
+        .kanban-board {
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+        }
+
+        .kanban-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            height: 350px;
+        }
+
+        .kanban-column {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .column-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .task-count {
+            background: var(--accent-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .kanban-task {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: grab;
+            transition: all 0.3s ease;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .kanban-task:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .kanban-task:active {
+            cursor: grabbing;
+        }
+
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .experiments-grid {
+                grid-template-columns: 1fr;
+                padding: 40px 20px;
+                gap: 30px;
+            }
+            
+            .experiment-body {
+                padding: 20px;
+                min-height: 350px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-green);
+        }
+
+        .delete-btn {
+            background: var(--accent-red);
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: white;
+            cursor: pointer;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .todo-item:hover .delete-btn,
+        .reminder-item:hover .delete-btn {
+            opacity: 1;
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Productivity UI Experiments Hub</h1>
+        <p>Experience the future of productivity interfaces with Tesla-grade engineering excellence</p>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="taskCount">0</div>
+                <div class="stat-label">Tasks Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="reminderCount">0</div>
+                <div class="stat-label">Active Reminders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="sessionTime">00:00</div>
+                <div class="stat-label">Session Time</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="experiments-grid">
+        <!-- Modern Minimalist Todo -->
+        <div class="experiment-card">
+            <div class="experiment-header">
+                <h3 class="experiment-title">Modern Minimalist Todo</h3>
+                <p class="experiment-subtitle">Clean, focused task management with smooth animations and intuitive interactions</p>
+            </div>
+            <div class="experiment-body modern-todo">
+                <div class="todo-input">
+                    <input type="text" id="todoInput" placeholder="What needs to be done?">
+                    <button class="add-btn" onclick="addTodo()">Add Task</button>
+                </div>
+                <div id="todoList"></div>
+            </div>
+        </div>
+
+        <!-- Glassmorphism Calendar -->
+        <div class="experiment-card">
+            <div class="experiment-header">
+                <h3 class="experiment-title">Glassmorphism Calendar</h3>
+                <p class="experiment-subtitle">Beautiful glass-effect calendar with event management and smooth transitions</p>
+            </div>
+            <div class="experiment-body glass-calendar">
+                <div class="calendar-header">
+                    <h4 class="calendar-title" id="calendarTitle"></h4>
+                    <div class="calendar-nav">
+                        <button class="nav-btn" onclick="previousMonth()">‹</button>
+                        <button class="nav-btn" onclick="nextMonth()">›</button>
+                    </div>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+                <div style="text-align: center; color: var(--text-secondary); font-size: 0.9rem;">
+                    Click days to toggle events • Today is highlighted
+                </div>
+            </div>
+        </div>
+
+        <!-- Neon Reminder System -->
+        <div class="experiment-card">
+            <div class="experiment-header">
+                <h3 class="experiment-title">Neon Reminder System</h3>
+                <p class="experiment-subtitle">High-tech reminder interface with priority levels and glowing effects</p>
+            </div>
+            <div class="experiment-body neon-reminders">
+                <div class="reminder-input">
+                    <div class="reminder-row">
+                        <input type="text" id="reminderInput" placeholder="Reminder description">
+                        <select id="prioritySelect" class="priority-select">
+                            <option value="high">High Priority</option>
+                            <option value="medium" selected>Medium Priority</option>
+                            <option value="low">Low Priority</option>
+                        </select>
+                    </div>
+                    <div class="reminder-row">
+                        <input type="datetime-local" id="reminderTime">
+                        <button class="add-btn" onclick="addReminder()">Create Reminder</button>
+                    </div>
+                </div>
+                <div id="reminderList"></div>
+            </div>
+        </div>
+
+        <!-- Kanban Board -->
+        <div class="experiment-card">
+            <div class="experiment-header">
+                <h3 class="experiment-title">Interactive Kanban Board</h3>
+                <p class="experiment-subtitle">Drag-and-drop workflow management with real-time updates and smooth animations</p>
+            </div>
+            <div class="experiment-body kanban-board">
+                <div class="kanban-columns">
+                    <div class="kanban-column" id="todo-column">
+                        <div class="column-header">
+                            <span class="column-title">To Do</span>
+                            <span class="task-count" id="todo-count">3</span>
+                        </div>
+                        <div class="kanban-task" draggable="true">
+                            <div class="task-title">Design new interface</div>
+                            <div class="task-meta">
+                                <span>Due: Today</span>
+                                <span>High</span>
+                            </div>
+                        </div>
+                        <div class="kanban-task" draggable="true">
+                            <div class="task-title">Code review session</div>
+                            <div class="task-meta">
+                                <span>Due: Tomorrow</span>
+                                <span>Medium</span>
+                            </div>
+                        </div>
+                        <div class="kanban-task" draggable="true">
+                            <div class="task-title">Update documentation</div>
+                            <div class="task-meta">
+                                <span>Due: This week</span>
+                                <span>Low</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="kanban-column" id="progress-column">
+                        <div class="column-header">
+                            <span class="column-title">In Progress</span>
+                            <span class="task-count" id="progress-count">2</span>
+                        </div>
+                        <div class="kanban-task" draggable="true">
+                            <div class="task-title">Implement user auth</div>
+                            <div class="task-meta">
+                                <span>Due: Today</span>
+                                <span>High</span>
+                            </div>
+                        </div>
+                        <div class="kanban-task" draggable="true">
+                            <div class="task-title">Database optimization</div>
+                            <div class="task-meta">
+                                <span>Due: Next week</span>
+                                <span>Medium</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="kanban-column" id="done-column">
+                        <div class="column-header">
+                            <span class="column-title">Done</span>
+                            <span class="task-count" id="done-count">1</span>
+                        </div>
+                        <div class="kanban-task" draggable="true">
+                            <div class="task-title">Setup deployment pipeline</div>
+                            <div class="task-meta">
+                                <span>Completed</span>
+                                <span>High</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let todos = [];
+        let reminders = [];
+        let currentDate = new Date();
+        let sessionStartTime = Date.now();
+        let completedTasks = 0;
+        let calendarEvents = new Set();
+
+        // Initialize the application
+        function init() {
+            updateSessionTimer();
+            setInterval(updateSessionTimer, 1000);
+            generateCalendar();
+            setupKanbanDragAndDrop();
+            
+            // Set default reminder time to 1 hour from now
+            const defaultTime = new Date();
+            defaultTime.setHours(defaultTime.getHours() + 1);
+            document.getElementById('reminderTime').value = defaultTime.toISOString().slice(0, 16);
+        }
+
+        // Session timer
+        function updateSessionTimer() {
+            const elapsed = Date.now() - sessionStartTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            document.getElementById('sessionTime').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('taskCount').textContent = completedTasks;
+            document.getElementById('reminderCount').textContent = reminders.length;
+        }
+
+        // Todo functionality
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+            
+            if (text === '') return;
+            
+            const todo = {
+                id: Date.now(),
+                text: text,
+                completed: false
+            };
+            
+            todos.push(todo);
+            input.value = '';
+            renderTodos();
+        }
+
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                if (todo.completed) {
+                    completedTasks++;
+                } else {
+                    completedTasks--;
+                }
+                updateStats();
+                renderTodos();
+            }
+        }
+
+        function deleteTodo(id) {
+            const todoIndex = todos.findIndex(t => t.id === id);
+            if (todoIndex > -1) {
+                if (todos[todoIndex].completed) {
+                    completedTasks--;
+                }
+                todos.splice(todoIndex, 1);
+                updateStats();
+                renderTodos();
+            }
+        }
+
+        function renderTodos() {
+            const todoList = document.getElementById('todoList');
+            todoList.innerHTML = '';
+            
+            todos.forEach(todo => {
+                const todoItem = document.createElement('div');
+                todoItem.className = 'todo-item';
+                todoItem.innerHTML = `
+                    <div class="todo-checkbox ${todo.completed ? 'completed' : ''}" 
+                         onclick="toggleTodo(${todo.id})"></div>
+                    <div class="todo-text ${todo.completed ? 'completed' : ''}">${todo.text}</div>
+                    <button class="delete-btn" onclick="deleteTodo(${todo.id})">Delete</button>
+                `;
+                todoList.appendChild(todoItem);
+            });
+        }
+
+        // Calendar functionality
+        function generateCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            document.getElementById('calendarTitle').textContent = 
+                currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+            
+            // Day headers
+            const dayHeaders = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+            dayHeaders.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day';
+                dayHeader.textContent = day;
+                dayHeader.style.fontWeight = '700';
+                dayHeader.style.color = 'var(--text-secondary)';
+                dayHeader.style.cursor = 'default';
+                calendarGrid.appendChild(dayHeader);
+            });
+            
+            // Empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day';
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Days of the month
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                // Check if it's today
+                if (year === today.getFullYear() && 
+                    month === today.getMonth() && 
+                    day === today.getDate()) {
+                    dayElement.classList.add('today');
+                }
+                
+                // Check if day has events
+                const dayKey = `${year}-${month}-${day}`;
+                if (calendarEvents.has(dayKey)) {
+                    dayElement.classList.add('event');
+                }
+                
+                dayElement.onclick = () => toggleCalendarEvent(dayKey);
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        function toggleCalendarEvent(dayKey) {
+            if (calendarEvents.has(dayKey)) {
+                calendarEvents.delete(dayKey);
+            } else {
+                calendarEvents.add(dayKey);
+            }
+            generateCalendar();
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            generateCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            generateCalendar();
+        }
+
+        // Reminder functionality
+        function addReminder() {
+            const input = document.getElementById('reminderInput');
+            const timeInput = document.getElementById('reminderTime');
+            const prioritySelect = document.getElementById('prioritySelect');
+            
+            const text = input.value.trim();
+            const time = timeInput.value;
+            const priority = prioritySelect.value;
+            
+            if (text === '' || time === '') return;
+            
+            const reminder = {
+                id: Date.now(),
+                text: text,
+                time: new Date(time),
+                priority: priority
+            };
+            
+            reminders.push(reminder);
+            input.value = '';
+            updateStats();
+            renderReminders();
+            
+            // Set default time for next reminder
+            const nextTime = new Date();
+            nextTime.setHours(nextTime.getHours() + 1);
+            timeInput.value = nextTime.toISOString().slice(0, 16);
+        }
+
+        function deleteReminder(id) {
+            const reminderIndex = reminders.findIndex(r => r.id === id);
+            if (reminderIndex > -1) {
+                reminders.splice(reminderIndex, 1);
+                updateStats();
+                renderReminders();
+            }
+        }
+
+        function renderReminders() {
+            const reminderList = document.getElementById('reminderList');
+            reminderList.innerHTML = '';
+            
+            // Sort reminders by time
+            const sortedReminders = [...reminders].sort((a, b) => a.time - b.time);
+            
+            sortedReminders.forEach(reminder => {
+                const reminderItem = document.createElement('div');
+                reminderItem.className = `reminder-item reminder-${reminder.priority}`;
+                
+                const timeString = reminder.time.toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                reminderItem.innerHTML = `
+                    <div class="reminder-header">
+                        <div class="reminder-title">${reminder.text}</div>
+                        <button class="delete-btn" onclick="deleteReminder(${reminder.id})">Delete</button>
+                    </div>
+                    <div class="reminder-time">${timeString} • ${reminder.priority.toUpperCase()} priority</div>
+                `;
+                reminderList.appendChild(reminderItem);
+            });
+        }
+
+        // Kanban functionality
+        function setupKanbanDragAndDrop() {
+            const tasks = document.querySelectorAll('.kanban-task');
+            const columns = document.querySelectorAll('.kanban-column');
+            
+            tasks.forEach(task => {
+                task.addEventListener('dragstart', handleDragStart);
+                task.addEventListener('dragend', handleDragEnd);
+            });
+            
+            columns.forEach(column => {
+                column.addEventListener('dragover', handleDragOver);
+                column.addEventListener('drop', handleDrop);
+                column.addEventListener('dragenter', handleDragEnter);
+                column.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+        
+        let draggedElement = null;
+        
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.style.opacity = '0.5';
+            this.style.transform = 'rotate(5deg)';
+        }
+        
+        function handleDragEnd(e) {
+            this.style.opacity = '';
+            this.style.transform = '';
+            draggedElement = null;
+            
+            // Update all counters
+            updateKanbanCounters();
+        }
+        
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+        
+        function handleDragEnter(e) {
+            if (e.target.classList.contains('kanban-column')) {
+                e.target.style.backgroundColor = 'rgba(0, 212, 255, 0.1)';
+                e.target.style.borderColor = 'var(--accent-blue)';
+            }
+        }
+        
+        function handleDragLeave(e) {
+            if (e.target.classList.contains('kanban-column')) {
+                e.target.style.backgroundColor = '';
+                e.target.style.borderColor = '';
+            }
+        }
+        
+        function handleDrop(e) {
+            e.preventDefault();
+            
+            if (e.target.classList.contains('kanban-column') && draggedElement) {
+                e.target.appendChild(draggedElement);
+                e.target.style.backgroundColor = '';
+                e.target.style.borderColor = '';
+                
+                // Add animation effect
+                draggedElement.style.animation = 'slideIn 0.3s ease';
+                setTimeout(() => {
+                    if (draggedElement) {
+                        draggedElement.style.animation = '';
+                    }
+                }, 300);
+            }
+        }
+        
+        function updateKanbanCounters() {
+            const todoCount = document.getElementById('todo-column').querySelectorAll('.kanban-task').length;
+            const progressCount = document.getElementById('progress-column').querySelectorAll('.kanban-task').length;
+            const doneCount = document.getElementById('done-column').querySelectorAll('.kanban-task').length;
+            
+            document.getElementById('todo-count').textContent = todoCount;
+            document.getElementById('progress-count').textContent = progressCount;
+            document.getElementById('done-count').textContent = doneCount;
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Enter to add todo when focused on todo input
+            if (e.key === 'Enter' && e.target.id === 'todoInput') {
+                addTodo();
+            }
+            
+            // Enter to add reminder when focused on reminder input
+            if (e.key === 'Enter' && e.target.id === 'reminderInput') {
+                addReminder();
+            }
+            
+            // Escape to clear inputs
+            if (e.key === 'Escape') {
+                document.getElementById('todoInput').value = '';
+                document.getElementById('reminderInput').value = '';
+            }
+        });
+
+        // Add some sample data for demonstration
+        function addSampleData() {
+            // Add sample todos
+            todos = [
+                { id: 1, text: "Review Tesla's UI design principles", completed: false },
+                { id: 2, text: "Optimize battery performance algorithm", completed: true },
+                { id: 3, text: "Implement autopilot safety features", completed: false }
+            ];
+            
+            // Add sample reminders
+            const now = new Date();
+            const reminder1 = new Date(now);
+            reminder1.setHours(now.getHours() + 2);
+            
+            const reminder2 = new Date(now);
+            reminder2.setDate(now.getDate() + 1);
+            
+            reminders = [
+                {
+                    id: 1,
+                    text: "Team standup meeting",
+                    time: reminder1,
+                    priority: "high"
+                },
+                {
+                    id: 2,
+                    text: "Code review deadline",
+                    time: reminder2,
+                    priority: "medium"
+                }
+            ];
+            
+            // Add sample calendar events
+            const today = new Date();
+            calendarEvents.add(`${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`);
+            calendarEvents.add(`${today.getFullYear()}-${today.getMonth()}-${today.getDate() + 3}`);
+            calendarEvents.add(`${today.getFullYear()}-${today.getMonth()}-${today.getDate() + 7}`);
+            
+            completedTasks = 1;
+            renderTodos();
+            renderReminders();
+            updateStats();
+        }
+
+        // Advanced features
+        function exportData() {
+            const data = {
+                todos: todos,
+                reminders: reminders,
+                calendarEvents: Array.from(calendarEvents),
+                stats: {
+                    completedTasks: completedTasks,
+                    sessionTime: Date.now() - sessionStartTime
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'productivity-data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Theme switching (bonus feature)
+        function switchTheme() {
+            const root = document.documentElement;
+            const currentBg = getComputedStyle(root).getPropertyValue('--primary-bg');
+            
+            if (currentBg.includes('0a0a0a')) {
+                // Switch to light theme
+                root.style.setProperty('--primary-bg', '#f8f9fa');
+                root.style.setProperty('--secondary-bg', '#ffffff');
+                root.style.setProperty('--text-primary', '#212529');
+                root.style.setProperty('--text-secondary', '#6c757d');
+                root.style.setProperty('--card-bg', 'rgba(0, 0, 0, 0.05)');
+            } else {
+                // Switch back to dark theme
+                root.style.setProperty('--primary-bg', '#0a0a0a');
+                root.style.setProperty('--secondary-bg', '#1a1a1a');
+                root.style.setProperty('--text-primary', '#ffffff');
+                root.style.setProperty('--text-secondary', '#aaaaaa');
+                root.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.05)');
+            }
+        }
+
+        // Performance monitoring
+        function monitorPerformance() {
+            if ('performance' in window) {
+                const navigation = performance.getEntriesByType('navigation')[0];
+                if (navigation) {
+                    console.log('Page load time:', navigation.loadEventEnd - navigation.loadEventStart, 'ms');
+                }
+            }
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            addSampleData();
+            monitorPerformance();
+        });
+
+        // Add double-click functionality for quick task completion
+        document.addEventListener('dblclick', function(e) {
+            if (e.target.classList.contains('todo-text') && !e.target.classList.contains('completed')) {
+                const todoItem = e.target.closest('.todo-item');
+                const checkbox = todoItem.querySelector('.todo-checkbox');
+                checkbox.click();
+            }
+        });
+
+        // Add right-click context menu for advanced actions
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.closest('.kanban-task')) {
+                e.preventDefault();
+                // Could implement custom context menu here
+                console.log('Right-clicked on kanban task');
+            }
+        });
+    </script>
+</body>
+</html>
