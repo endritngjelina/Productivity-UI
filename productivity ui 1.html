@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity UI Experiments Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #0078d4;
+            --secondary-blue: #106ebe;
+            --dark-blue: #004578;
+            --light-gray: #f3f2f1;
+            --medium-gray: #edebe9;
+            --dark-gray: #323130;
+            --success-green: #107c10;
+            --warning-orange: #ff8c00;
+            --error-red: #d13438;
+            --purple: #5c2e91;
+            --teal: #008080;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-gray);
+            overflow-x: hidden;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+            padding: 4rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+            to { text-shadow: 0 0 30px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.3); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+            color: #fff;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .experiments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .experiment-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        .experiment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--purple));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .experiment-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+        }
+
+        .experiment-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+            color: var(--primary-blue);
+            background: rgba(0,120,212,0.1);
+            padding: 0.5rem;
+            border-radius: 10px;
+        }
+
+        /* Todo List Styles */
+        .todo-container {
+            min-height: 300px;
+        }
+
+        .todo-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--medium-gray);
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .todo-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0,120,212,0.1);
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: rgba(243,242,241,0.5);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .todo-item:hover {
+            background: rgba(243,242,241,0.8);
+            transform: translateX(5px);
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary-blue);
+            border-radius: 50%;
+            margin-right: 1rem;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .todo-checkbox.checked {
+            background: var(--primary-blue);
+        }
+
+        .todo-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        .todo-delete {
+            color: var(--error-red);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .todo-delete:hover {
+            background: rgba(209,52,56,0.1);
+        }
+
+        /* Calendar Styles */
+        .calendar-container {
+            min-height: 350px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-nav {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 5px;
+            color: var(--primary-blue);
+            transition: background 0.3s ease;
+        }
+
+        .calendar-nav:hover {
+            background: rgba(0,120,212,0.1);
+        }
+
+        .calendar-month {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        .calendar-day-header {
+            font-weight: 600;
+            color: var(--primary-blue);
+            background: rgba(0,120,212,0.1);
+        }
+
+        .calendar-day:not(.calendar-day-header):hover {
+            background: rgba(0,120,212,0.1);
+            transform: scale(1.1);
+        }
+
+        .calendar-day.today {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: var(--success-green);
+            border-radius: 50%;
+        }
+
+        /* Timer Styles */
+        .timer-container {
+            text-align: center;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .timer-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .timer-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timer-btn.start {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .timer-btn.pause {
+            background: var(--warning-orange);
+            color: white;
+        }
+
+        .timer-btn.reset {
+            background: var(--error-red);
+            color: white;
+        }
+
+        .timer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .timer-presets {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--primary-blue);
+            background: transparent;
+            color: var(--primary-blue);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preset-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Notes Styles */
+        .notes-container {
+            min-height: 350px;
+        }
+
+        .notes-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-btn {
+            padding: 0.5rem;
+            border: 1px solid var(--medium-gray);
+            background: white;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .toolbar-btn:hover {
+            background: var(--light-gray);
+        }
+
+        .toolbar-btn.active {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .notes-editor {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 2px solid var(--medium-gray);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .notes-editor:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        /* Analytics Dashboard */
+        .analytics-container {
+            min-height: 300px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: white;
+            padding: 1.5rem 1rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: scale(1.05);
+        }
+
+        .metric-number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .progress-label {
+            flex: 0 0 80px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--light-gray);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--purple));
+            border-radius: 10px;
+            transition: width 2s ease;
+        }
+
+        .progress-value {
+            flex: 0 0 40px;
+            text-align: right;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .experiments-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .experiment-card {
+                padding: 1.5rem;
+            }
+            
+            .stats-container {
+                gap: 2rem;
+            }
+            
+            .timer-display {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Animation Keyframes */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Style variations for different experiments */
+        .minimal-style {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+        }
+
+        .dark-style {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%) !important;
+            color: white;
+        }
+
+        .glassmorphism-style {
+            background: rgba(255, 255, 255, 0.25) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.18) !important;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Productivity UI Lab</h1>
+            <p class="hero-subtitle">Explore cutting-edge interface designs for maximum productivity and user engagement</p>
+            
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-number">12+</span>
+                    <span class="stat-label">UI Experiments</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">6</span>
+                    <span class="stat-label">Design Systems</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Responsive</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="main-container">
+        <div class="section-header">
+            <h2 class="section-title">Interactive UI Experiments</h2>
+            <p class="section-description">Each component demonstrates different design philosophies and interaction patterns, showcasing modern web development capabilities and user experience principles.</p>
+        </div>
+
+        <div class="experiments-grid">
+            <!-- Todo List - Classic Style -->
+            <div class="experiment-card" id="todoCard">
+                <div class="card-header">
+                    <h3 class="card-title">Smart Task Manager</h3>
+                    <i class="fas fa-tasks card-icon"></i>
+                </div>
+                <div class="todo-container">
+                    <input type="text" class="todo-input" id="todoInput" placeholder="Add a new task...">
+                    <div id="todoList"></div>
+                    <div class="todo-stats" style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
+                        <span id="todoStats">0 tasks remaining</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Widget -->
+            <div class="experiment-card">
+                <div class="card-header">
+                    <h3 class="card-title">Interactive Calendar</h3>
+                    <i class="fas fa-calendar-alt card-icon"></i>
+                </div>
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button class="calendar-nav" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                        <div class="calendar-month" id="currentMonth"></div>
+                        <button class="calendar-nav" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                    <div id="selectedDate" style="text-align: center; color: #666; font-size: 0.9rem;"></div>
+                </div>
+            </div>
+
+            <!-- Pomodoro Timer -->
+            <div class="experiment-card">
+                <div class="card-header">
+                    <h3 class="card-title">Focus Timer</h3>
+                    <i class="fas fa-clock card-icon"></i>
+                </div>
+                <div class="timer-container">
+                    <div class="timer-display" id="timerDisplay">25:00</div>
+                    <div class="timer-controls">
+                        <button class="timer-btn start" id="startTimer">Start</button>
+                        <button class="timer-btn pause" id="pauseTimer">Pause</button>
+                        <button class="timer-btn reset" id="resetTimer">Reset</button>
+                    </div>
+                    <div class="timer-presets">
+                        <button class="preset-btn" data-minutes="25">25min</button>
+                        <button class="preset-btn" data-minutes="15">15min</button>
+                        <button class="preset-btn" data-minutes="5">5min</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Smart Notes -->
+            <div class="experiment-card">
+                <div class="card-header">
+                    <h3 class="card-title">Smart Notes</h3>
+                    <i class="fas fa-sticky-note card-icon"></i>
+                </div>
+                <div class="notes-container">
+                    <div class="notes-toolbar">
+                        <button class="toolbar-btn" data-format="bold"><i class="fas fa-bold"></i></button>
+                        <button class="toolbar-btn" data-format="italic"><i class="fas fa-italic"></i></button>
+                        <button class="toolbar-btn" data-format="underline"><i class="fas fa-underline"></i></button>
+                        <button class="toolbar-btn" data-format="save"><i class="fas fa-save"></i></button>
+                    </div>
+                    <textarea class="notes-editor" id="notesEditor" placeholder="Start writing your notes..."></textarea>
+                    <div style="margin-top: 1rem; font-size: 0.8rem; color: #666;">
+                        <span id="wordCount">0 words</span> | <span id="charCount">0 characters</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Dashboard -->
+            <div class="experiment-card">
+                <div class="card-header">
+                    <h3 class="card-title">Productivity Analytics</h3>
+                    <i class="fas fa-chart-bar card-icon"></i>
+                </div>
+                <div class="analytics-container">
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <span class="metric-number" id="tasksCompleted">0</span>
+                            <span class="metric-label">Tasks Done</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-number" id="focusTime">0h</span>
+                            <span class="metric-label">Focus Time</span>
+                        </div>
+                        <div class="metric-card">
+                            <span class="metric-number" id="productivity">0%</span>
+                            <span class="metric-label">Efficiency</span>
+                        </div>
+                    </div>
+                    <div class="progress-bars">
+                        <div class="progress-item">
+                            <span class="progress-label">Daily Goal</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 70%"></div>
+                            </div>
+                            <span class="progress-value">70%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span class="progress-label">Weekly</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 45%"></div>
+                            </div>
+                            <span class="progress-value">45%</span>
+                        </div>
+                        <div class="progress-item">
+                            <span class="progress-label">Monthly</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 82%"></div>
+                            </div>
+                            <span class="progress-value">82%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Panel -->
+            <div class="experiment-card">
+                <div class="card-header">
+                    <h3 class="card-title">Quick Actions</h3>
+                    <i class="fas fa-bolt card-icon"></i>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; min-height: 300px;">
+                    <button class="timer-btn" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;">
+                        <i class="fas fa-plus" style="font-size: 1.5rem;"></i>
+                        <span>New Task</span>
+                    </button>
+                    <button class="timer-btn" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, #f093fb, #f5576c); color: white; border: none;">
+                        <i class="fas fa-calendar" style="font-size: 1.5rem;"></i>
+                        <span>Schedule</span>
+                    </button>
+                    <button class="timer-btn" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; border: none;">
+                        <i class="fas fa-play" style="font-size: 1.5rem;"></i>
+                        <span>Focus</span>
+                    </button>
+                    <button class="timer-btn" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; background: linear-gradient(135deg, #43e97b, #38f9d7); color: white; border: none;">
+                        <i class="fas fa-chart-line" style="font-size: 1.5rem;"></i>
+                        <span>Analytics</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state management
+        const AppState = {
+            todos: [],
+            currentDate: new Date(),
+            timerState: {
+                minutes: 25,
+                seconds: 0,
+                isRunning: false,
+                interval: null
+            },
+            analytics: {
+                tasksCompleted: 0,
+                focusTime: 0,
+                productivity: 0
+            }
+        };
+
+        // Todo List Functionality
+        class TodoManager {
+            constructor() {
+                this.input = document.getElementById('todoInput');
+                this.list = document.getElementById('todoList');
+                this.stats = document.getElementById('todoStats');
+                this.init();
+            }
+
+            init() {
+                this.input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && this.input.value.trim()) {
+                        this.addTodo(this.input.value.trim());
+                        this.input.value = '';
+                    }
+                });
+                this.loadTodos();
+            }
+
+            addTodo(text) {
+                const todo = {
+                    id: Date.now(),
+                    text,
+                    completed: false,
+                    createdAt: new Date().toLocaleString()
+                };
+                AppState.todos.push(todo);
+                this.renderTodos();
+                this.updateStats();
+                this.saveTodos();
+            }
+
+            toggleTodo(id) {
+                const todo = AppState.todos.find(t => t.id === id);
+                if (todo) {
+                    todo.completed = !todo.completed;
+                    if (todo.completed) {
+                        AppState.analytics.tasksCompleted++;
+                        this.updateAnalytics();
+                    }
+                    this.renderTodos();
+                    this.updateStats();
+                    this.saveTodos();
+                }
+            }
+
+            deleteTodo(id) {
+                AppState.todos = AppState.todos.filter(t => t.id !== id);
+                this.renderTodos();
+                this.updateStats();
+                this.saveTodos();
+            }
+
+            renderTodos() {
+                this.list.innerHTML = '';
+                AppState.todos.forEach(todo => {
+                    const item = document.createElement('div');
+                    item.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                    item.innerHTML = `
+                        <div class="todo-checkbox ${todo.completed ? 'checked' : ''}" onclick="todoManager.toggleTodo(${todo.id})"></div>
+                        <span class="todo-text">${todo.text}</span>
+                        <i class="fas fa-trash todo-delete" onclick="todoManager.deleteTodo(${todo.id})"></i>
+                    `;
+                    this.list.appendChild(item);
+                });
+            }
+
+            updateStats() {
+                const total = AppState.todos.length;
+                const completed = AppState.todos.filter(t => t.completed).length;
+                const remaining = total - completed;
+                this.stats.textContent = `${remaining} tasks remaining • ${completed} completed`;
+            }
+
+            updateAnalytics() {
+                document.getElementById('tasksCompleted').textContent = AppState.analytics.tasksCompleted;
+                document.getElementById('productivity').textContent = Math.min(100, AppState.analytics.tasksCompleted * 10) + '%';
+            }
+
+            saveTodos() {
+                // In a real app, this would save to a database
+                console.log('Saving todos:', AppState.todos);
+            }
+
+            loadTodos() {
+                // In a real app, this would load from a database
+                this.renderTodos();
+                this.updateStats();
+            }
+        }
+
+        // Calendar Functionality
+        class CalendarManager {
+            constructor() {
+                this.currentDate = new Date();
+                this.grid = document.getElementById('calendarGrid');
+                this.monthDisplay = document.getElementById('currentMonth');
+                this.selectedDateDisplay = document.getElementById('selectedDate');
+                this.events = {}; // Store events by date
+                this.init();
+            }
+
+            init() {
+                document.getElementById('prevMonth').addEventListener('click', () => {
+                    this.currentDate.setMonth(this.currentDate.getMonth() - 1);
+                    this.render();
+                });
+
+                document.getElementById('nextMonth').addEventListener('click', () => {
+                    this.currentDate.setMonth(this.currentDate.getMonth() + 1);
+                    this.render();
+                });
+
+                // Add some sample events
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(today.getDate() + 1);
+                
+                this.events[today.toDateString()] = ['Team Meeting', 'Code Review'];
+                this.events[tomorrow.toDateString()] = ['Project Deadline'];
+                
+                this.render();
+            }
+
+            render() {
+                this.monthDisplay.textContent = this.currentDate.toLocaleString('default', { 
+                    month: 'long', 
+                    year: 'numeric' 
+                });
+
+                this.grid.innerHTML = '';
+                
+                // Add day headers
+                const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                dayHeaders.forEach(day => {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day calendar-day-header';
+                    dayElement.textContent = day;
+                    this.grid.appendChild(dayElement);
+                });
+
+                const firstDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
+                const lastDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 0);
+                const startDate = new Date(firstDay);
+                startDate.setDate(startDate.getDate() - firstDay.getDay());
+
+                const today = new Date();
+                
+                for (let i = 0; i < 42; i++) {
+                    const cellDate = new Date(startDate);
+                    cellDate.setDate(startDate.getDate() + i);
+                    
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day';
+                    
+                    if (cellDate.getMonth() === this.currentDate.getMonth()) {
+                        dayElement.textContent = cellDate.getDate();
+                        
+                        if (cellDate.toDateString() === today.toDateString()) {
+                            dayElement.classList.add('today');
+                        }
+                        
+                        if (this.events[cellDate.toDateString()]) {
+                            dayElement.classList.add('has-event');
+                        }
+                        
+                        dayElement.addEventListener('click', () => {
+                            this.selectDate(cellDate);
+                        });
+                    }
+                    
+                    this.grid.appendChild(dayElement);
+                }
+            }
+
+            selectDate(date) {
+                const events = this.events[date.toDateString()] || [];
+                const eventText = events.length > 0 ? ` • ${events.join(', ')}` : '';
+                this.selectedDateDisplay.textContent = `Selected: ${date.toLocaleDateString()}${eventText}`;
+            }
+        }
+
+        // Timer Functionality
+        class TimerManager {
+            constructor() {
+                this.display = document.getElementById('timerDisplay');
+                this.startBtn = document.getElementById('startTimer');
+                this.pauseBtn = document.getElementById('pauseTimer');
+                this.resetBtn = document.getElementById('resetTimer');
+                this.init();
+            }
+
+            init() {
+                this.startBtn.addEventListener('click', () => this.start());
+                this.pauseBtn.addEventListener('click', () => this.pause());
+                this.resetBtn.addEventListener('click', () => this.reset());
+
+                document.querySelectorAll('.preset-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const minutes = parseInt(btn.dataset.minutes);
+                        this.setTimer(minutes, 0);
+                    });
+                });
+
+                this.updateDisplay();
+            }
+
+            start() {
+                if (!AppState.timerState.isRunning) {
+                    AppState.timerState.isRunning = true;
+                    AppState.timerState.interval = setInterval(() => {
+                        if (AppState.timerState.seconds > 0) {
+                            AppState.timerState.seconds--;
+                        } else if (AppState.timerState.minutes > 0) {
+                            AppState.timerState.minutes--;
+                            AppState.timerState.seconds = 59;
+                        } else {
+                            this.complete();
+                            return;
+                        }
+                        this.updateDisplay();
+                    }, 1000);
+                    this.startBtn.textContent = 'Running';
+                    this.startBtn.style.background = '#666';
+                }
+            }
+
+            pause() {
+                if (AppState.timerState.isRunning) {
+                    AppState.timerState.isRunning = false;
+                    clearInterval(AppState.timerState.interval);
+                    this.startBtn.textContent = 'Start';
+                    this.startBtn.style.background = 'var(--success-green)';
+                }
+            }
+
+            reset() {
+                this.pause();
+                this.setTimer(25, 0);
+            }
+
+            complete() {
+                this.pause();
+                AppState.analytics.focusTime += 0.5; // Add 30 minutes of focus time
+                document.getElementById('focusTime').textContent = AppState.analytics.focusTime + 'h';
+                alert('🎉 Timer completed! Great focus session!');
+                this.reset();
+            }
+
+            setTimer(minutes, seconds) {
+                AppState.timerState.minutes = minutes;
+                AppState.timerState.seconds = seconds;
+                this.updateDisplay();
+            }
+
+            updateDisplay() {
+                const mins = String(AppState.timerState.minutes).padStart(2, '0');
+                const secs = String(AppState.timerState.seconds).padStart(2, '0');
+                this.display.textContent = `${mins}:${secs}`;
+            }
+        }
+
+        // Notes Functionality
+        class NotesManager {
+            constructor() {
+                this.editor = document.getElementById('notesEditor');
+                this.wordCount = document.getElementById('wordCount');
+                this.charCount = document.getElementById('charCount');
+                this.init();
+            }
+
+            init() {
+                this.editor.addEventListener('input', () => this.updateCounts());
+                
+                document.querySelectorAll('.toolbar-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const format = btn.dataset.format;
+                        if (format === 'save') {
+                            this.saveNotes();
+                        } else {
+                            this.formatText(format);
+                        }
+                    });
+                });
+
+                this.loadNotes();
+            }
+
+            formatText(command) {
+                document.execCommand(command, false, null);
+                this.editor.focus();
+            }
+
+            updateCounts() {
+                const text = this.editor.value;
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                const chars = text.length;
+                
+                this.wordCount.textContent = `${words} words`;
+                this.charCount.textContent = `${chars} characters`;
+            }
+
+            saveNotes() {
+                console.log('Saving notes:', this.editor.value);
+                // Visual feedback
+                const saveBtn = document.querySelector('[data-format="save"]');
+                const originalHTML = saveBtn.innerHTML;
+                saveBtn.innerHTML = '<i class="fas fa-check"></i>';
+                saveBtn.style.background = 'var(--success-green)';
+                saveBtn.style.color = 'white';
+                
+                setTimeout(() => {
+                    saveBtn.innerHTML = originalHTML;
+                    saveBtn.style.background = '';
+                    saveBtn.style.color = '';
+                }, 1000);
+            }
+
+            loadNotes() {
+                this.updateCounts();
+            }
+        }
+
+        // Animation Controller
+        class AnimationController {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.observeElements();
+                this.addInteractiveEffects();
+            }
+
+            observeElements() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.animationPlayState = 'running';
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.experiment-card').forEach(card => {
+                    observer.observe(card);
+                });
+            }
+
+            addInteractiveEffects() {
+                // Add ripple effect to buttons
+                document.querySelectorAll('.timer-btn, .preset-btn, .toolbar-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const ripple = document.createElement('span');
+                        const rect = btn.getBoundingClientRect();
+                        const size = Math.max(rect.width, rect.height);
+                        const x = e.clientX - rect.left - size / 2;
+                        const y = e.clientY - rect.top - size / 2;
+                        
+                        ripple.style.cssText = `
+                            position: absolute;
+                            width: ${size}px;
+                            height: ${size}px;
+                            left: ${x}px;
+                            top: ${y}px;
+                            background: rgba(255,255,255,0.3);
+                            border-radius: 50%;
+                            transform: scale(0);
+                            animation: ripple 0.6s ease-out;
+                            pointer-events: none;
+                        `;
+                        
+                        btn.style.position = 'relative';
+                        btn.style.overflow = 'hidden';
+                        btn.appendChild(ripple);
+                        
+                        setTimeout(() => ripple.remove(), 600);
+                    });
+                });
+
+                // Add CSS for ripple animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes ripple {
+                        to {
+                            transform: scale(4);
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+
+        // Theme Controller
+        class ThemeController {
+            constructor() {
+                this.currentTheme = 'default';
+                this.init();
+            }
+
+            init() {
+                // Add theme switcher (could be extended)
+                this.addThemeSwitcher();
+            }
+
+            addThemeSwitcher() {
+                const switcher = document.createElement('div');
+                switcher.innerHTML = `
+                    <div style="position: fixed; top: 20px; right: 20px; z-index: 1000; background: rgba(255,255,255,0.9); padding: 1rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px);">
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <span style="font-size: 0.8rem; font-weight: 600; color: #666;">Theme:</span>
+                            <button class="theme-btn" data-theme="default" style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ddd; background: linear-gradient(45deg, #667eea, #764ba2); cursor: pointer;"></button>
+                            <button class="theme-btn" data-theme="minimal" style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ddd; background: linear-gradient(45deg, #f5f7fa, #c3cfe2); cursor: pointer;"></button>
+                            <button class="theme-btn" data-theme="dark" style="width: 20px; height: 20px; border-radius: 50%; border: 2px solid #ddd; background: linear-gradient(45deg, #2c3e50, #34495e); cursor: pointer;"></button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(switcher);
+
+                document.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.switchTheme(btn.dataset.theme);
+                    });
+                });
+            }
+
+            switchTheme(theme) {
+                document.querySelectorAll('.experiment-card').forEach((card, index) => {
+                    setTimeout(() => {
+                        card.className = `experiment-card ${theme}-style`;
+                    }, index * 100);
+                });
+                this.currentTheme = theme;
+            }
+        }
+
+        // Performance Monitor
+        class PerformanceMonitor {
+            constructor() {
+                this.metrics = {
+                    loadTime: 0,
+                    renderTime: 0,
+                    interactions: 0
+                };
+                this.init();
+            }
+
+            init() {
+                this.measureLoadTime();
+                this.trackInteractions();
+                this.displayMetrics();
+            }
+
+            measureLoadTime() {
+                window.addEventListener('load', () => {
+                    this.metrics.loadTime = performance.now();
+                    console.log(`Page loaded in ${this.metrics.loadTime.toFixed(2)}ms`);
+                });
+            }
+
+            trackInteractions() {
+                document.addEventListener('click', () => {
+                    this.metrics.interactions++;
+                });
+            }
+
+            displayMetrics() {
+                // Could add a performance dashboard
+                console.log('Performance metrics available:', this.metrics);
+            }
+        }
+
+        // Initialize Application
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize all managers
+            window.todoManager = new TodoManager();
+            window.calendarManager = new CalendarManager();
+            window.timerManager = new TimerManager();
+            window.notesManager = new NotesManager();
+            window.animationController = new AnimationController();
+            window.themeController = new ThemeController();
+            window.performanceMonitor = new PerformanceMonitor();
+
+            // Add welcome message
+            setTimeout(() => {
+                console.log('🚀 Productivity UI Lab initialized successfully!');
+                console.log('💡 Try different themes using the theme switcher in the top-right corner');
+                console.log('📊 All interactions are being tracked for performance analysis');
+            }, 1000);
+
+            // Simulate some initial data for demonstration
+            setTimeout(() => {
+                if (AppState.todos.length === 0) {
+                    todoManager.addTodo('Review code architecture');
+                    todoManager.addTodo('Implement new features');
+                    todoManager.addTodo('Write unit tests');
+                    todoManager.addTodo('Update documentation');
+                }
+            }, 2000);
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + Enter to start timer
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                timerManager.start();
+                e.preventDefault();
+            }
+            
+            // Ctrl/Cmd + Shift + N for new note
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'N') {
+                notesManager.editor.focus();
+                e.preventDefault();
+            }
+        });
+
+        // Progressive Web App features
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                console.log('🔧 Ready for PWA implementation');
+            });
+        }
+
+        // Add some advanced interactions
+        document.addEventListener('mousemove', (e) => {
+            // Subtle parallax effect for hero section
+            const hero = document.querySelector('.hero-section');
+            if (hero) {
+                const x = (e.clientX / window.innerWidth) * 100;
+                const y = (e.clientY / window.innerHeight) * 100;
+                hero.style.backgroundPosition = `${x/10}% ${y/10}%`;
+            }
+        });
+
+        // Auto-save functionality
+        setInterval(() => {
+            // Auto-save notes
+            if (notesManager && notesManager.editor.value.length > 10) {
+                console.log('Auto-saving...');
+            }
+        }, 30000); // Every 30 seconds
+    </script>
+</body>
+</html>
