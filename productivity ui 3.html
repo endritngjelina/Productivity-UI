@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity UI Experiments Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #0066cc;
+            --primary-dark: #004499;
+            --accent-orange: #ff9500;
+            --accent-green: #00cc66;
+            --background: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .controls {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        select, button {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        select:focus, button:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        button {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .ui-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .ui-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-blue);
+        }
+
+        .ui-card h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            background: var(--accent-orange);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Todo List Styles */
+        .todo-minimal {
+            min-height: 300px;
+        }
+
+        .todo-minimal input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .todo-item:hover {
+            background: #f7fafc;
+            margin: 0 -1rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            border-radius: 8px;
+        }
+
+        .todo-item input[type="checkbox"] {
+            margin-right: 1rem;
+            transform: scale(1.2);
+        }
+
+        .todo-item.completed span {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .delete-btn {
+            margin-left: auto;
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        /* Kanban Board */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            min-height: 400px;
+        }
+
+        .kanban-column {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 12px;
+            border-top: 4px solid;
+        }
+
+        .kanban-column.todo { border-top-color: #ef4444; }
+        .kanban-column.progress { border-top-color: var(--accent-orange); }
+        .kanban-column.done { border-top-color: var(--accent-green); }
+
+        .kanban-column h4 {
+            margin-bottom: 1rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .kanban-task {
+            background: white;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: move;
+            transition: all 0.2s ease;
+        }
+
+        .kanban-task:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        /* Calendar Styles */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .calendar-day {
+            background: white;
+            padding: 0.75rem;
+            min-height: 60px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .calendar-day:hover {
+            background: #f0f9ff;
+        }
+
+        .calendar-day.today {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .calendar-day.other-month {
+            background: #f8fafc;
+            color: #94a3b8;
+        }
+
+        .event-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-orange);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Timeline View */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary-blue);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-left: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -0.5rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-orange);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--primary-blue);
+        }
+
+        .timeline-time {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        /* Notes Styles */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .note-card {
+            background: #fef3c7;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .note-card:hover {
+            transform: rotate(-1deg) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .note-card:nth-child(even) {
+            background: #ddd6fe;
+        }
+
+        .note-card:nth-child(3n) {
+            background: #ccfbf1;
+        }
+
+        .note-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .note-content {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Dashboard Widgets */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .widget {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .widget::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .widget-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .widget-label {
+            opacity: 0.9;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group {
+                justify-content: space-between;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-orange);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Productivity UI Experiments Hub</h1>
+        <p>Explore different interface patterns for productivity applications</p>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="totalTasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="completedTasks">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="activeProjects">8</div>
+                <div class="stat-label">Active Views</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="controls">
+            <div class="control-group">
+                <label for="categoryFilter">Filter by Category:</label>
+                <select id="categoryFilter">
+                    <option value="all">All Categories</option>
+                    <option value="todo">Todo Lists</option>
+                    <option value="calendar">Calendars</option>
+                    <option value="notes">Notes</option>
+                    <option value="dashboard">Dashboards</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="styleFilter">UI Style:</label>
+                <select id="styleFilter">
+                    <option value="all">All Styles</option>
+                    <option value="minimal">Minimal</option>
+                    <option value="modern">Modern</option>
+                    <option value="classic">Classic</option>
+                </select>
+            </div>
+            <button onclick="addSampleData()">Add Sample Data</button>
+            <button onclick="exportData()">Export All Data</button>
+            <button onclick="resetAll()">Reset All</button>
+        </div>
+
+        <div class="grid" id="uiGrid">
+            <!-- Minimal Todo List -->
+            <div class="ui-card fade-in" data-category="todo" data-style="minimal">
+                <h3>📝 Minimal Todo <span class="badge">Clean</span></h3>
+                <div class="todo-minimal">
+                    <input type="text" placeholder="Add a new task..." onkeypress="addTodo(event, 'minimal')">
+                    <div id="todoList-minimal"></div>
+                </div>
+            </div>
+
+            <!-- Kanban Board -->
+            <div class="ui-card fade-in" data-category="todo" data-style="modern">
+                <h3>📋 Kanban Board <span class="badge">Flexible</span></h3>
+                <div class="kanban-board">
+                    <div class="kanban-column todo">
+                        <h4>To Do</h4>
+                        <div id="kanban-todo" ondrop="drop(event)" ondragover="allowDrop(event)">
+                            <div class="kanban-task" draggable="true" ondragstart="drag(event)" data-id="1">Design new feature</div>
+                            <div class="kanban-task" draggable="true" ondragstart="drag(event)" data-id="2">User research</div>
+                        </div>
+                    </div>
+                    <div class="kanban-column progress">
+                        <h4>In Progress</h4>
+                        <div id="kanban-progress" ondrop="drop(event)" ondragover="allowDrop(event)">
+                            <div class="kanban-task" draggable="true" ondragstart="drag(event)" data-id="3">Development phase 1</div>
+                        </div>
+                    </div>
+                    <div class="kanban-column done">
+                        <h4>Done</h4>
+                        <div id="kanban-done" ondrop="drop(event)" ondragover="allowDrop(event)">
+                            <div class="kanban-task" draggable="true" ondragstart="drag(event)" data-id="4">Requirements gathering</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Grid -->
+            <div class="ui-card fade-in" data-category="calendar" data-style="modern">
+                <h3>📅 Calendar Grid <span class="badge">Visual</span></h3>
+                <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+
+            <!-- Timeline View -->
+            <div class="ui-card fade-in" data-category="calendar" data-style="minimal">
+                <h3>⏰ Timeline View <span class="badge">Linear</span></h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">9:00 AM</div>
+                        <div class="timeline-content">
+                            <strong>Team Standup</strong><br>
+                            Daily sync with development team
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">11:30 AM</div>
+                        <div class="timeline-content">
+                            <strong>Client Meeting</strong><br>
+                            Project requirements review
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">2:00 PM</div>
+                        <div class="timeline-content">
+                            <strong>Design Review</strong><br>
+                            UI/UX feedback session
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sticky Notes -->
+            <div class="ui-card fade-in" data-category="notes" data-style="classic">
+                <h3>📝 Sticky Notes <span class="badge">Creative</span></h3>
+                <div class="notes-grid">
+                    <div class="note-card" onclick="editNote(this)">
+                        <div class="note-title">Meeting Notes</div>
+                        <div class="note-content">Discussed Q4 objectives and team restructuring</div>
+                    </div>
+                    <div class="note-card" onclick="editNote(this)">
+                        <div class="note-title">Ideas</div>
+                        <div class="note-content">New feature concepts for mobile app</div>
+                    </div>
+                    <div class="note-card" onclick="editNote(this)">
+                        <div class="note-title">Reminders</div>
+                        <div class="note-content">Update documentation, Schedule team building</div>
+                    </div>
+                </div>
+                <button onclick="addNote()" style="margin-top: 1rem; width: 100%;">Add Note</button>
+            </div>
+
+            <!-- Dashboard Widgets -->
+            <div class="ui-card fade-in" data-category="dashboard" data-style="modern">
+                <h3>📊 Dashboard Widgets <span class="badge">Metrics</span></h3>
+                <div class="dashboard-grid">
+                    <div class="widget">
+                        <div class="widget-value" id="tasksWidget">12</div>
+                        <div class="widget-label">Active Tasks</div>
+                    </div>
+                    <div class="widget">
+                        <div class="widget-value" id="progressWidget">85%</div>
+                        <div class="widget-label">Completion Rate</div>
+                    </div>
+                    <div class="widget">
+                        <div class="widget-value" id="streakWidget">7</div>
+                        <div class="widget-label">Day Streak</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Priority Matrix -->
+            <div class="ui-card fade-in" data-category="todo" data-style="classic">
+                <h3>🎯 Priority Matrix <span class="badge">Strategic</span></h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; height: 300px;">
+                    <div style="background: #fef2f2; padding: 1rem; border-radius: 8px; border-left: 4px solid #ef4444;">
+                        <h4 style="color: #dc2626; margin-bottom: 0.5rem;">Urgent & Important</h4>
+                        <div class="priority-task">Fix critical bug</div>
+                        <div class="priority-task">Client presentation</div>
+                    </div>
+                    <div style="background: #fff7ed; padding: 1rem; border-radius: 8px; border-left: 4px solid #f97316;">
+                        <h4 style="color: #ea580c; margin-bottom: 0.5rem;">Important & Not Urgent</h4>
+                        <div class="priority-task">Strategic planning</div>
+                        <div class="priority-task">Skill development</div>
+                    </div>
+                    <div style="background: #fefce8; padding: 1rem; border-radius: 8px; border-left: 4px solid #eab308;">
+                        <h4 style="color: #ca8a04; margin-bottom: 0.5rem;">Urgent & Not Important</h4>
+                        <div class="priority-task">Email responses</div>
+                        <div class="priority-task">Meeting requests</div>
+                    </div>
+                    <div style="background: #f0fdf4; padding: 1rem; border-radius: 8px; border-left: 4px solid #22c55e;">
+                        <h4 style="color: #16a34a; margin-bottom: 0.5rem;">Neither Urgent nor Important</h4>
+                        <div class="priority-task">Social media</div>
+                        <div class="priority-task">Office organization</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Tracker -->
+            <div class="ui-card fade-in" data-category="dashboard" data-style="minimal">
+                <h3>📈 Progress Tracker <span class="badge">Visual</span></h3>
+                <div style="space-y: 1rem;">
+                    <div class="progress-item">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Project Alpha</span>
+                            <span>75%</span>
+                        </div>
+                        <div style="background: #e5e7eb; height: 8px; border-radius: 4px;">
+                            <div style="background: linear-gradient(90deg, #3b82f6, #1d4ed8); height: 100%; width: 75%; border-radius: 4px; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item" style="margin-top: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Website Redesign</span>
+                            <span>45%</span>
+                        </div>
+                        <div style="background: #e5e7eb; height: 8px; border-radius: 4px;">
+                            <div style="background: linear-gradient(90deg, #10b981, #059669); height: 100%; width: 45%; border-radius: 4px; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item" style="margin-top: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Mobile App</span>
+                            <span>90%</span>
+                        </div>
+                        <div style="background: #e5e7eb; height: 8px; border-radius: 4px;">
+                            <div style="background: linear-gradient(90deg, #f59e0b, #d97706); height: 100%; width: 90%; border-radius: 4px; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state management
+        const appState = {
+            todos: {
+                minimal: []
+            },
+            notes: [],
+            events: [],
+            filters: {
+                category: 'all',
+                style: 'all'
+            }
+        };
+
+        // Initialize the application
+        function init() {
+            generateCalendar();
+            addSampleData();
+            updateStats();
+            setupEventListeners();
+        }
+
+        // Event listeners setup
+        function setupEventListeners() {
+            document.getElementById('categoryFilter').addEventListener('change', filterCards);
+            document.getElementById('styleFilter').addEventListener('change', filterCards);
+        }
+
+        // Todo List Functions
+        function addTodo(event, listType) {
+            if (event.key === 'Enter' && event.target.value.trim()) {
+                const todo = {
+                    id: Date.now(),
+                    text: event.target.value.trim(),
+                    completed: false,
+                    createdAt: new Date()
+                };
+                
+                appState.todos[listType].push(todo);
+                event.target.value = '';
+                renderTodos(listType);
+                updateStats();
+            }
+        }
+
+        function renderTodos(listType) {
+            const container = document.getElementById(`todoList-${listType}`);
+            container.innerHTML = '';
+            
+            appState.todos[listType].forEach(todo => {
+                const todoElement = document.createElement('div');
+                todoElement.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                todoElement.innerHTML = `
+                    <input type="checkbox" ${todo.completed ? 'checked' : ''} 
+                           onchange="toggleTodo(${todo.id}, '${listType}')">
+                    <span>${todo.text}</span>
+                    <button class="delete-btn" onclick="deleteTodo(${todo.id}, '${listType}')">Delete</button>
+                `;
+                container.appendChild(todoElement);
+            });
+        }
+
+        function toggleTodo(id, listType) {
+            const todo = appState.todos[listType].find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                renderTodos(listType);
+                updateStats();
+            }
+        }
+
+        function deleteTodo(id, listType) {
+            appState.todos[listType] = appState.todos[listType].filter(t => t.id !== id);
+            renderTodos(listType);
+            updateStats();
+        }
+
+        // Kanban Board Functions
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.getAttribute('data-id'));
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const taskId = ev.dataTransfer.getData("text");
+            const taskElement = document.querySelector(`[data-id="${taskId}"]`);
+            
+            if (ev.target.classList.contains('kanban-column') || ev.target.parentElement.classList.contains('kanban-column')) {
+                const dropZone = ev.target.classList.contains('kanban-column') ? 
+                    ev.target.querySelector('div[id^="kanban-"]') : ev.target;
+                dropZone.appendChild(taskElement);
+                
+                // Add animation
+                taskElement.style.animation = 'fadeIn 0.3s ease-in';
+                setTimeout(() => taskElement.style.animation = '', 300);
+            }
+        }
+
+        // Calendar Functions
+        function generateCalendar() {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+            
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+            
+            // Add day headers
+            const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            dayHeaders.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day';
+                header.style.fontWeight = 'bold';
+                header.style.background = '#f8fafc';
+                header.textContent = day;
+                calendarGrid.appendChild(header);
+            });
+            
+            // Add empty cells for days before the first day of the month
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day other-month';
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                // Highlight today
+                if (day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear()) {
+                    dayElement.classList.add('today');
+                }
+                
+                // Add random events for demonstration
+                if (Math.random() > 0.7) {
+                    const eventDot = document.createElement('div');
+                    eventDot.className = 'event-dot';
+                    dayElement.appendChild(eventDot);
+                }
+                
+                dayElement.onclick = () => selectDate(day, currentMonth, currentYear);
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        function selectDate(day, month, year) {
+            const selectedDate = new Date(year, month, day);
+            alert(`Selected date: ${selectedDate.toDateString()}\nClick to add events or tasks for this date.`);
+        }
+
+        // Notes Functions
+        function editNote(noteElement) {
+            const titleElement = noteElement.querySelector('.note-title');
+            const contentElement = noteElement.querySelector('.note-content');
+            
+            const newTitle = prompt('Edit title:', titleElement.textContent);
+            const newContent = prompt('Edit content:', contentElement.textContent);
+            
+            if (newTitle !== null) titleElement.textContent = newTitle;
+            if (newContent !== null) contentElement.textContent = newContent;
+        }
+
+        function addNote() {
+            const title = prompt('Note title:');
+            const content = prompt('Note content:');
+            
+            if (title && content) {
+                const notesGrid = document.querySelector('.notes-grid');
+                const noteCard = document.createElement('div');
+                noteCard.className = 'note-card';
+                noteCard.onclick = () => editNote(noteCard);
+                noteCard.innerHTML = `
+                    <div class="note-title">${title}</div>
+                    <div class="note-content">${content}</div>
+                `;
+                notesGrid.appendChild(noteCard);
+                
+                // Add to state
+                appState.notes.push({ title, content, id: Date.now() });
+                updateStats();
+            }
+        }
+
+        // Filter Functions
+        function filterCards() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const styleFilter = document.getElementById('styleFilter').value;
+            const cards = document.querySelectorAll('.ui-card');
+            
+            cards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const style = card.getAttribute('data-style');
+                
+                const categoryMatch = categoryFilter === 'all' || category === categoryFilter;
+                const styleMatch = styleFilter === 'all' || style === styleFilter;
+                
+                if (categoryMatch && styleMatch) {
+                    card.style.display = 'block';
+                    card.classList.add('fade-in');
+                } else {
+                    card.style.display = 'none';
+                    card.classList.remove('fade-in');
+                }
+            });
+            
+            appState.filters.category = categoryFilter;
+            appState.filters.style = styleFilter;
+        }
+
+        // Sample Data Functions
+        function addSampleData() {
+            // Add sample todos
+            const sampleTodos = [
+                'Complete project proposal',
+                'Review team performance',
+                'Update documentation',
+                'Schedule client meeting',
+                'Prepare quarterly report'
+            ];
+            
+            sampleTodos.forEach(todoText => {
+                const todo = {
+                    id: Date.now() + Math.random(),
+                    text: todoText,
+                    completed: Math.random() > 0.7,
+                    createdAt: new Date()
+                };
+                appState.todos.minimal.push(todo);
+            });
+            
+            renderTodos('minimal');
+            
+            // Add sample notes
+            const sampleNotes = [
+                { title: 'Project Ideas', content: 'AI-powered task scheduler, Real-time collaboration tools' },
+                { title: 'Meeting Summary', content: 'Q3 targets exceeded by 15%, New hire onboarding process' },
+                { title: 'Research Notes', content: 'User behavior patterns, Mobile usage statistics' }
+            ];
+            
+            sampleNotes.forEach(note => {
+                appState.notes.push({ ...note, id: Date.now() + Math.random() });
+            });
+            
+            updateStats();
+            animateWidgets();
+        }
+
+        // Stats and Analytics
+        function updateStats() {
+            const totalTasks = appState.todos.minimal.length + 
+                             document.querySelectorAll('.kanban-task').length;
+            const completedTasks = appState.todos.minimal.filter(t => t.completed).length +
+                                 document.querySelectorAll('#kanban-done .kanban-task').length;
+            
+            document.getElementById('totalTasks').textContent = totalTasks;
+            document.getElementById('completedTasks').textContent = completedTasks;
+            document.getElementById('tasksWidget').textContent = totalTasks;
+            
+            const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            document.getElementById('progressWidget').textContent = completionRate + '%';
+        }
+
+        function animateWidgets() {
+            const widgets = document.querySelectorAll('.widget-value');
+            widgets.forEach(widget => {
+                const finalValue = widget.textContent;
+                const isPercentage = finalValue.includes('%');
+                const numericValue = parseInt(finalValue);
+                
+                let currentValue = 0;
+                const increment = Math.ceil(numericValue / 50);
+                
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= numericValue) {
+                        currentValue = numericValue;
+                        clearInterval(timer);
+                    }
+                    widget.textContent = currentValue + (isPercentage ? '%' : '');
+                }, 50);
+            });
+        }
+
+        // Data Management
+        function exportData() {
+            const data = {
+                todos: appState.todos,
+                notes: appState.notes,
+                exportDate: new Date().toISOString(),
+                stats: {
+                    totalTasks: document.getElementById('totalTasks').textContent,
+                    completedTasks: document.getElementById('completedTasks').textContent
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'productivity-data.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function resetAll() {
+            if (confirm('Are you sure you want to reset all data? This action cannot be undone.')) {
+                // Reset state
+                appState.todos.minimal = [];
+                appState.notes = [];
+                appState.events = [];
+                
+                // Reset UI
+                document.getElementById('todoList-minimal').innerHTML = '';
+                document.querySelector('.notes-grid').innerHTML = `
+                    <div class="note-card" onclick="editNote(this)">
+                        <div class="note-title">Meeting Notes</div>
+                        <div class="note-content">Discussed Q4 objectives and team restructuring</div>
+                    </div>
+                    <div class="note-card" onclick="editNote(this)">
+                        <div class="note-title">Ideas</div>
+                        <div class="note-content">New feature concepts for mobile app</div>
+                    </div>
+                    <div class="note-card" onclick="editNote(this)">
+                        <div class="note-title">Reminders</div>
+                        <div class="note-content">Update documentation, Schedule team building</div>
+                    </div>
+                `;
+                
+                // Reset Kanban board
+                document.getElementById('kanban-todo').innerHTML = `
+                    <div class="kanban-task" draggable="true" ondragstart="drag(event)" data-id="1">Design new feature</div>
+                    <div class="kanban-task" draggable="true" ondragstart="drag(event)" data-id="2">User research</div>
+                `;
+                document.getElementById('kanban-progress').innerHTML = `
+                    <div class="kanban-task" draggable="true" ondragstart="drag(event)" data-id="3">Development phase 1</div>
+                `;
+                document.getElementById('kanban-done').innerHTML = `
+                    <div class="kanban-task" draggable="true" ondragstart="drag(event)" data-id="4">Requirements gathering</div>
+                `;
+                
+                updateStats();
+                generateCalendar();
+            }
+        }
+
+        // Advanced Features
+        function addAdvancedTask() {
+            const priority = prompt('Task priority (1-5):') || '3';
+            const category = prompt('Task category:') || 'General';
+            const dueDate = prompt('Due date (YYYY-MM-DD):') || new Date().toISOString().split('T')[0];
+            const description = prompt('Task description:');
+            
+            if (description) {
+                const task = {
+                    id: Date.now(),
+                    text: description,
+                    priority: parseInt(priority),
+                    category: category,
+                    dueDate: new Date(dueDate),
+                    completed: false,
+                    createdAt: new Date()
+                };
+                
+                appState.todos.minimal.push(task);
+                renderTodos('minimal');
+                updateStats();
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Ctrl+N for new task
+            if (event.ctrlKey && event.key === 'n') {
+                event.preventDefault();
+                document.querySelector('.todo-minimal input').focus();
+            }
+            
+            // Ctrl+E for export
+            if (event.ctrlKey && event.key === 'e') {
+                event.preventDefault();
+                exportData();
+            }
+            
+            // Ctrl+R for reset (with confirmation)
+            if (event.ctrlKey && event.key === 'r') {
+                event.preventDefault();
+                resetAll();
+            }
+        });
+
+        // Real-time clock update
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString();
+            const clockElements = document.querySelectorAll('.clock');
+            clockElements.forEach(clock => {
+                clock.textContent = timeString;
+            });
+        }
+
+        // Auto-save functionality
+        function autoSave() {
+            const data = {
+                todos: appState.todos,
+                notes: appState.notes,
+                lastSaved: new Date().toISOString()
+            };
+            // In a real application, this would save to a backend
+            console.log('Auto-saved data:', data);
+        }
+
+        // Performance monitoring
+        function trackPerformance() {
+            const startTime = performance.now();
+            
+            // Simulate some work
+            setTimeout(() => {
+                const endTime = performance.now();
+                console.log(`Operation took ${endTime - startTime} milliseconds`);
+            }, 100);
+        }
+
+        // Search functionality
+        function searchTasks(query) {
+            const allTasks = document.querySelectorAll('.todo-item, .kanban-task');
+            const searchQuery = query.toLowerCase();
+            
+            allTasks.forEach(task => {
+                const taskText = task.textContent.toLowerCase();
+                if (taskText.includes(searchQuery)) {
+                    task.style.backgroundColor = '#fff3cd';
+                    task.style.border = '2px solid #ffc107';
+                } else {
+                    task.style.backgroundColor = '';
+                    task.style.border = '';
+                }
+            });
+        }
+
+        // Theme switching
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            // Save theme preference
+            const isDark = document.body.classList.contains('dark-theme');
+            // In a real app, this would be saved to localStorage or backend
+            console.log('Theme changed to:', isDark ? 'dark' : 'light');
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            
+            // Set up auto-save
+            setInterval(autoSave, 30000); // Auto-save every 30 seconds
+            
+            // Set up clock updates
+            setInterval(updateClock, 1000);
+            
+            // Initial performance tracking
+            trackPerformance();
+            
+            // Add welcome message
+            setTimeout(() => {
+                console.log('🎉 Productivity UI Experiments Hub loaded successfully!');
+                console.log('💡 Pro Tips:');
+                console.log('• Use Ctrl+N for quick task entry');
+                console.log('• Use Ctrl+E to export your data');
+                console.log('• Drag and drop tasks in the Kanban board');
+                console.log('• Click on notes to edit them');
+                console.log('• Use filters to focus on specific UI patterns');
+            }, 1000);
+        });
+
+        // Add some CSS for dark theme support
+        const darkThemeStyles = `
+            .dark-theme {
+                --background: #1a202c;
+                --card-bg: #2d3748;
+                --text-primary: #f7fafc;
+                --text-secondary: #a0aec0;
+                --border: #4a5568;
+            }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = darkThemeStyles;
+        document.head.appendChild(styleSheet);
+    </script>
+</body>
+</html>
