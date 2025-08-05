@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity UI Hub | Professional Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --dark: #1a1a2e;
+            --dark-light: #252547;
+            --light: #f8fafc;
+            --text: #334155;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--accent), var(--primary));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape-1 { width: 80px; height: 80px; top: 10%; left: 10%; animation-delay: 0s; }
+        .shape-2 { width: 60px; height: 60px; top: 70%; left: 80%; animation-delay: 2s; }
+        .shape-3 { width: 100px; height: 100px; top: 30%; right: 10%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: '🚀';
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .stats {
+            display: flex;
+            gap: 2rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 2rem;
+            min-height: calc(100vh - 80px);
+        }
+
+        .sidebar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .sidebar h3 {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .experiment-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .experiment-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .section-header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .ui-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .ui-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ui-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .ui-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .ui-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .card-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+        }
+
+        /* Todo List Styles */
+        .todo-minimal .todo-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .todo-minimal .todo-item:hover {
+            background: var(--light);
+            padding-left: 1rem;
+            margin-left: -1rem;
+            margin-right: -1rem;
+        }
+
+        .todo-kanban {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            height: 300px;
+        }
+
+        .kanban-column {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 2px dashed var(--border);
+        }
+
+        .kanban-header {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text);
+            text-align: center;
+        }
+
+        .kanban-item {
+            background: white;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: grab;
+            transition: all 0.2s ease;
+        }
+
+        .kanban-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .kanban-item:active {
+            cursor: grabbing;
+        }
+
+        /* Calendar Styles */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .calendar-day {
+            background: white;
+            padding: 0.75rem;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .calendar-day:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calendar-day.today {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-weight: bold;
+        }
+
+        .calendar-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .timeline-event {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--light);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .timeline-time {
+            font-weight: 600;
+            color: var(--primary);
+            min-width: 80px;
+        }
+
+        /* Input Styles */
+        .modern-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .modern-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .modern-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modern-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .checkbox-modern {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-modern:checked {
+            background: linear-gradient(135deg, var(--success), #22c55e);
+            border-color: var(--success);
+        }
+
+        .checkbox-modern:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+        }
+
+        /* Notification Styles */
+        .notification-container {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .notification {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transform: translateX(100%);
+            animation: slideInRight 0.3s ease-out forwards;
+            max-width: 300px;
+        }
+
+        @keyframes slideInRight {
+            to { transform: translateX(0); }
+        }
+
+        .notification.success { border-left: 4px solid var(--success); }
+        .notification.warning { border-left: 4px solid var(--warning); }
+        .notification.danger { border-left: 4px solid var(--danger); }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .sidebar {
+                position: static;
+                order: -1;
+            }
+            
+            .ui-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Advanced Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200px 0; }
+            100% { background-position: calc(200px + 100%) 0; }
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 0px, #e0e0e0 40px, #f0f0f0 80px);
+            background-size: 200px;
+            animation: shimmer 1.5s infinite;
+        }
+
+        /* New AI Assistant Section */
+        .ai-assistant {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
+
+        .ai-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ai-button:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Progress Visualization */
+        .progress-bar {
+            height: 10px;
+            background: var(--border);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        /* Graph Styles */
+        .graph-container {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-radius: 12px;
+            background: var(--light);
+        }
+
+        .graph-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--accent));
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+
+        .graph-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-light);
+        }
+        
+        /* AI Chat Container */
+        .ai-chat-container {
+            position: fixed;
+            bottom: 90px;
+            right: 2rem;
+            width: 350px;
+            height: 450px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: translateY(20px);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .ai-chat-container.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 0.75rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+        
+        .message.user {
+            align-self: flex-end;
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.assistant {
+            align-self: flex-start;
+            background: var(--light);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-input {
+            padding: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        
+        .chat-input button {
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+        
+        /* Dark mode toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 101;
+        }
+        
+        .theme-toggle i {
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        /* Heatmap styles */
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(52, 1fr);
+            grid-auto-rows: 10px;
+            gap: 2px;
+        }
+        
+        .heatmap-cell {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            background: #e0e0e0;
+        }
+        
+        .heatmap-cell.active-1 { background: #9be9a8; }
+        .heatmap-cell.active-2 { background: #40c463; }
+        .heatmap-cell.active-3 { background: #30a14e; }
+        .heatmap-cell.active-4 { background: #216e39; }
+    </style>
+</head>
+<body>
+    <div class="background-animation">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
+        <div class="floating-shape shape-3"></div>
+    </div>
+
+    <div class="theme-toggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">Productivity AI Hub</div>
+            <div class="stats">
+                <div class="stat">
+                    <span>🎯</span>
+                    <span id="tasks-completed">12 Tasks</span>
+                </div>
+                <div class="stat">
+                    <span>⚡</span>
+                    <span id="productivity-score">78% Productive</span>
+                </div>
+                <div class="stat">
+                    <span>🔥</span>
+                    <span id="streak">7 Day Streak</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav class="sidebar">
+            <h3>UI Experiments</h3>
+            <div class="nav-item active" data-section="todo">
+                <span>📝</span> Todo Lists
+            </div>
+            <div class="nav-item" data-section="calendar">
+                <span>📅</span> Calendars
+            </div>
+            <div class="nav-item" data-section="reminders">
+                <span>🔔</span> Reminders
+            </div>
+            <div class="nav-item" data-section="notes">
+                <span>📋</span> Notes
+            </div>
+            <div class="nav-item" data-section="timers">
+                <span>⏰</span> Timers
+            </div>
+            <div class="nav-item" data-section="analytics">
+                <span>📊</span> Analytics
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Todo Lists Section -->
+            <section class="experiment-section active" id="todo">
+                <div class="section-header">
+                    <h1 class="section-title">Todo List Experiments</h1>
+                    <p class="section-description">Explore different approaches to task management with various UI patterns and interaction models</p>
+                </div>
+
+                <div class="ui-grid">
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Smart Scheduling</h3>
+                            <span class="card-badge">AI-Optimized</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1rem; border-radius: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 500;">Optimal Focus Block</span>
+                                    <span style="font-size: 0.8rem; opacity: 0.9;">AI Suggested</span>
+                                </div>
+                                <div style="font-size: 0.9rem; opacity: 0.9;">9:00 AM - 11:00 AM</div>
+                                <div style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.25rem;">Best time for deep work based on your patterns</div>
+                            </div>
+                            <div style="background: #f8fafc; padding: 1rem; border-radius: 12px; border: 1px solid #e2e8f0;">
+                                <div style="font-weight: 500; margin-bottom: 0.5rem;">Meeting Conflicts Detected</div>
+                                <div style="font-size: 0.9rem; color: #64748b;">2 overlapping meetings on Tuesday</div>
+                                <button class="modern-button" style="margin-top: 0.5rem; padding: 0.5rem 1rem; font-size: 0.8rem;">Resolve</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Minimal List</h3>
+                            <span class="card-badge">Clean</span>
+                        </div>
+                        <div class="todo-minimal">
+                            <div class="todo-item">
+                                <input type="checkbox" class="checkbox-modern" id="task1">
+                                <label for="task1">Complete project documentation</label>
+                            </div>
+                            <div class="todo-item">
+                                <input type="checkbox" class="checkbox-modern" id="task2">
+                                <label for="task2">Review code submissions</label>
+                            </div>
+                            <div class="todo-item">
+                                <input type="checkbox" class="checkbox-modern" id="task3">
+                                <label for="task3">Plan team meeting agenda</label>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                            <input type="text" class="modern-input" placeholder="Add new task..." id="new-task-minimal">
+                            <button class="modern-button" onclick="addTask('minimal')">Add</button>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Kanban Board</h3>
+                            <span class="card-badge">Visual</span>
+                        </div>
+                        <div class="todo-kanban">
+                            <div class="kanban-column">
+                                <div class="kanban-header">To Do</div>
+                                <div class="kanban-item" draggable="true">Design mockups</div>
+                                <div class="kanban-item" draggable="true">User research</div>
+                            </div>
+                            <div class="kanban-column">
+                                <div class="kanban-header">In Progress</div>
+                                <div class="kanban-item" draggable="true">Frontend development</div>
+                            </div>
+                            <div class="kanban-column">
+                                <div class="kanban-header">Done</div>
+                                <div class="kanban-item" draggable="true">Initial planning</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Priority Matrix</h3>
+                            <span class="card-badge">Strategic</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; height: 250px;">
+                            <div style="background: #fee2e2; border-radius: 8px; padding: 1rem; border: 2px dashed #fca5a5;">
+                                <div style="font-weight: bold; color: #dc2626; margin-bottom: 0.5rem;">Urgent & Important</div>
+                                <div style="background: white; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.25rem; font-size: 0.9rem;">Fix critical bug</div>
+                            </div>
+                            <div style="background: #fef3c7; border-radius: 8px; padding: 1rem; border: 2px dashed #fcd34d;">
+                                <div style="font-weight: bold; color: #d97706; margin-bottom: 0.5rem;">Important</div>
+                                <div style="background: white; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.25rem; font-size: 0.9rem;">Strategic planning</div>
+                            </div>
+                            <div style="background: #dbeafe; border-radius: 8px; padding: 1rem; border: 2px dashed #93c5fd;">
+                                <div style="font-weight: bold; color: #2563eb; margin-bottom: 0.5rem;">Urgent</div>
+                                <div style="background: white; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.25rem; font-size: 0.9rem;">Respond to emails</div>
+                            </div>
+                            <div style="background: #f3f4f6; border-radius: 8px; padding: 1rem; border: 2px dashed #9ca3af;">
+                                <div style="font-weight: bold; color: #6b7280; margin-bottom: 0.5rem;">Later</div>
+                                <div style="background: white; padding: 0.5rem; border-radius: 4px; margin-bottom: 0.25rem; font-size: 0.9rem;">Organize files</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calendar Section -->
+            <section class="experiment-section" id="calendar">
+                <div class="section-header">
+                    <h1 class="section-title">Calendar Experiments</h1>
+                    <p class="section-description">Different ways to visualize and interact with your schedule and events</p>
+                </div>
+
+                <div class="ui-grid">
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Monthly Grid</h3>
+                            <span class="card-badge">Classic</span>
+                        </div>
+                        <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                            <button class="modern-button" onclick="changeMonth(-1)">← Prev</button>
+                            <h4 id="current-month">July 2025</h4>
+                            <button class="modern-button" onclick="changeMonth(1)">Next →</button>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid">
+                            <!-- Calendar days will be generated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Timeline View</h3>
+                            <span class="card-badge">Linear</span>
+                        </div>
+                        <div class="calendar-timeline">
+                            <div class="timeline-event">
+                                <div class="timeline-time">9:00 AM</div>
+                                <div>
+                                    <div style="font-weight: 500;">Team Standup</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">Daily sync meeting</div>
+                                </div>
+                            </div>
+                            <div class="timeline-event">
+                                <div class="timeline-time">2:00 PM</div>
+                                <div>
+                                    <div style="font-weight: 500;">Client Review</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">Project presentation</div>
+                                </div>
+                            </div>
+                            <div class="timeline-event">
+                                <div class="timeline-time">4:30 PM</div>
+                                <div>
+                                    <div style="font-weight: 500;">Code Review</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">Frontend components</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Heatmap Calendar</h3>
+                            <span class="card-badge">Data-Driven</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(52, 1fr); grid-auto-rows: 10px; gap: 2px; margin-bottom: 1rem;">
+                            <!-- Heatmap cells will be generated by JavaScript -->
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem;">
+                            <span>Less productive</span>
+                            <div style="display: flex; gap: 2px;">
+                                <div style="width: 12px; height: 12px; background: #ebedf0; border-radius: 2px;"></div>
+                                <div style="width: 12px; height: 12px; background: #9be9a8; border-radius: 2px;"></div>
+                                <div style="width: 12px; height: 12px; background: #40c463; border-radius: 2px;"></div>
+                                <div style="width: 12px; height: 12px; background: #30a14e; border-radius: 2px;"></div>
+                                <div style="width: 12px; height: 12px; background: #216e39; border-radius: 2px;"></div>
+                            </div>
+                            <span>More productive</span>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Schedule Analytics</h3>
+                            <span class="card-badge">Insights</span>
+                        </div>
+                        <div class="graph-container">
+                            <div class="graph-bar" style="height: 30%;"><div class="graph-label">Mon</div></div>
+                            <div class="graph-bar" style="height: 60%;"><div class="graph-label">Tue</div></div>
+                            <div class="graph-bar" style="height: 80%;"><div class="graph-label">Wed</div></div>
+                            <div class="graph-bar" style="height: 70%;"><div class="graph-label">Thu</div></div>
+                            <div class="graph-bar" style="height: 40%;"><div class="graph-label">Fri</div></div>
+                            <div class="graph-bar" style="height: 20%;"><div class="graph-label">Sat</div></div>
+                            <div class="graph-bar" style="height: 10%;"><div class="graph-label">Sun</div></div>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                <span>Meeting Hours: <strong>14.5h</strong></span>
+                                <span>Focus Time: <strong>8.2h</strong></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reminders Section -->
+            <section class="experiment-section" id="reminders">
+                <div class="section-header">
+                    <h1 class="section-title">Reminder Experiments</h1>
+                    <p class="section-description">Smart notification systems and reminder interfaces to keep you on track</p>
+                </div>
+
+                <div class="ui-grid">
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Location-Based</h3>
+                            <span class="card-badge">Context-Aware</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 12px; border: 1px solid #0ea5e9;">
+                                <span style="font-size: 1.5rem;">📍</span>
+                                <div>
+                                    <div style="font-weight: 500;">Grocery Store</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">Buy milk, bread, eggs</div>
+                                </div>
+                                <button class="modern-button" style="padding: 0.5rem; margin-left: auto;">✓</button>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #fefce8; border-radius: 12px; border: 1px solid #eab308;">
+                                <span style="font-size: 1.5rem;">🏢</span>
+                                <div>
+                                    <div style="font-weight: 500;">Office</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">Submit expense report</div>
+                                </div>
+                                <button class="modern-button" style="padding: 0.5rem; margin-left: auto;">✓</button>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #f0fdf4; border-radius: 12px; border: 1px solid #22c55e;">
+                                <span style="font-size: 1.5rem;">🏠</span>
+                                <div>
+                                    <div style="font-weight: 500;">Home</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">Water plants</div>
+                                </div>
+                                <button class="modern-button" style="padding: 0.5rem; margin-left: auto;">✓</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Time-Based</h3>
+                            <span class="card-badge">Scheduled</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #fef2f2; border-radius: 8px; border-left: 4px solid #ef4444;">
+                                <div>
+                                    <div style="font-weight: 500; color: #dc2626;">Take medication</div>
+                                    <div style="font-size: 0.8rem; color: #991b1b;">Every 8 hours</div>
+                                </div>
+                                <div style="font-size: 0.9rem; color: #dc2626; font-weight: 500;">2:00 PM</div>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #eff6ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+                                <div>
+                                    <div style="font-weight: 500; color: #1d4ed8;">Team standup</div>
+                                    <div style="font-size: 0.8rem; color: #1e40af;">Daily at 9 AM</div>
+                                </div>
+                                <div style="font-size: 0.9rem; color: #1d4ed8; font-weight: 500;">Tomorrow</div>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #22c55e;">
+                                <div>
+                                    <div style="font-weight: 500; color: #15803d;">Weekly review</div>
+                                    <div style="font-size: 0.8rem; color: #166534;">Every Friday 5 PM</div>
+                                </div>
+                                <div style="font-size: 0.9rem; color: #15803d; font-weight: 500;">Friday</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Smart Notifications</h3>
+                            <span class="card-badge">Adaptive</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1rem; border-radius: 12px;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span>🧠</span>
+                                    <span style="font-weight: 500;">AI Priority Alert</span>
+                                </div>
+                                <div style="font-size: 0.9rem; opacity: 0.9;">Your most important task is due in 2 hours</div>
+                                <div style="display: flex; gap: 0.5rem; margin-top: 0.75rem;">
+                                    <button style="padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.2); border: none; border-radius: 6px; color: white; font-size: 0.8rem; cursor: pointer;">Snooze 30m</button>
+                                    <button style="padding: 0.25rem 0.75rem; background: rgba(255,255,255,0.2); border: none; border-radius: 6px; color: white; font-size: 0.8rem; cursor: pointer;">Mark Done</button>
+                                </div>
+                            </div>
+                            <div style="background: #fef3c7; padding: 1rem; border-radius: 12px; border: 1px solid #f59e0b;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; color: #92400e;">
+                                    <span>⚡</span>
+                                    <span style="font-weight: 500;">Focus Mode Active</span>
+                                </div>
+                                <div style="font-size: 0.9rem; color: #92400e;">Notifications paused until 4:00 PM</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Habit Tracking</h3>
+                            <span class="card-badge">Behavioral</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
+                            <div style="text-align: center; font-size: 0.8rem; color: #64748b; padding: 0.25rem;">M</div>
+                            <div style="text-align: center; font-size: 0.8rem; color: #64748b; padding: 0.25rem;">T</div>
+                            <div style="text-align: center; font-size: 0.8rem; color: #64748b; padding: 0.25rem;">W</div>
+                            <div style="text-align: center; font-size: 0.8rem; color: #64748b; padding: 0.25rem;">T</div>
+                            <div style="text-align: center; font-size: 0.8rem; color: #64748b; padding: 0.25rem;">F</div>
+                            <div style="text-align: center; font-size: 0.8rem; color: #64748b; padding: 0.25rem;">S</div>
+                            <div style="text-align: center; font-size: 0.8rem; color: #64748b; padding: 0.25rem;">S</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 500;">💧 Drink Water</span>
+                                    <span style="font-size: 0.9rem; color: #22c55e;">6/7 days</span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem;">
+                                    <div style="width: 100%; height: 8px; background: #22c55e; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #22c55e; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #22c55e; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #22c55e; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #22c55e; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #22c55e; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 500;">🏃 Exercise</span>
+                                    <span style="font-size: 0.9rem; color: #f59e0b;">3/7 days</span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.25rem;">
+                                    <div style="width: 100%; height: 8px; background: #f59e0b; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #f59e0b; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #e5e7eb; border-radius: 4px;"></div>
+                                    <div style="width: 100%; height: 8px; background: #f59e0b; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Notes Section -->
+            <section class="experiment-section" id="notes">
+                <div class="section-header">
+                    <h1 class="section-title">Note-Taking Experiments</h1>
+                    <p class="section-description">Different approaches to capturing, organizing, and retrieving your thoughts and information</p>
+                </div>
+
+                <div class="ui-grid">
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Markdown Editor</h3>
+                            <span class="card-badge">Developer-Friendly</span>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; height: 300px;">
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem; color: #64748b;">Write</h4>
+                                <textarea style="width: 100%; height: 250px; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'Monaco', monospace; font-size: 0.9rem; resize: none;" placeholder="# Meeting Notes
+
+## Key Points
+- Project timeline discussion
+- Budget allocation review
+- Next steps planning
+
+### Action Items
+[ ] Send follow-up email
+[ ] Schedule next meeting
+[ ] Update project board"></textarea>
+                            </div>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem; color: #64748b;">Preview</h4>
+                                <div style="height: 250px; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; background: #fafafa; overflow-y: auto;">
+                                    <h1 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Meeting Notes</h1>
+                                    <h2 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #374151;">Key Points</h2>
+                                    <ul style="margin-left: 1rem; margin-bottom: 1rem;">
+                                        <li>Project timeline discussion</li>
+                                        <li>Budget allocation review</li>
+                                        <li>Next steps planning</li>
+                                    </ul>
+                                    <h3 style="font-size: 1rem; margin-bottom: 0.5rem; color: #374151;">Action Items</h3>
+                                    <div style="margin-left: 1rem;">
+                                        <div>☐ Send follow-up email</div>
+                                        <div>☐ Schedule next meeting</div>
+                                        <div>☐ Update project board</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Mind Map</h3>
+                            <span class="card-badge">Visual</span>
+                        </div>
+                        <div style="position: relative; height: 300px; background: #f8fafc; border-radius: 12px; overflow: hidden;">
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1rem; border-radius: 50%; font-weight: bold; z-index: 10;">Project</div>
+                            
+                            <div style="position: absolute; top: 20%; left: 20%; background: #fef3c7; padding: 0.75rem; border-radius: 8px; border: 2px solid #f59e0b;">Research</div>
+                            <div style="position: absolute; top: 20%; right: 20%; background: #dbeafe; padding: 0.75rem; border-radius: 8px; border: 2px solid #3b82f6;">Design</div>
+                            <div style="position: absolute; bottom: 20%; left: 20%; background: #f0fdf4; padding: 0.75rem; border-radius: 8px; border: 2px solid #22c55e;">Development</div>
+                            <div style="position: absolute; bottom: 20%; right: 20%; background: #fef2f2; padding: 0.75rem; border-radius: 8px; border: 2px solid #ef4444;">Testing</div>
+                            
+                            <!-- Connecting lines -->
+                            <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+                                <line x1="50%" y1="50%" x2="20%" y2="20%" stroke="#64748b" stroke-width="2" opacity="0.5"/>
+                                <line x1="50%" y1="50%" x2="80%" y2="20%" stroke="#64748b" stroke-width="2" opacity="0.5"/>
+                                <line x1="50%" y1="50%" x2="20%" y2="80%" stroke="#64748b" stroke-width="2" opacity="0.5"/>
+                                <line x1="50%" y1="50%" x2="80%" y2="80%" stroke="#64748b" stroke-width="2" opacity="0.5"/>
+                            </svg>
+                        </div>
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="modern-button" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Add Node</button>
+                            <button class="modern-button" style="padding: 0.5rem 1rem; font-size: 0.8rem;">Export</button>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Voice Notes</h3>
+                            <span class="card-badge">Audio</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="text-align: center; padding: 2rem;">
+                                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #ef4444, #f97316); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s ease;" onclick="toggleRecording()">
+                                    <span style="color: white; font-size: 2rem;" id="record-icon">🎤</span>
+                                </div>
+                                <div style="font-weight: 500; margin-bottom: 0.5rem;">Tap to Record</div>
+                                <div style="font-size: 0.9rem; color: #64748b;">Voice notes are automatically transcribed</div>
+                            </div>
+                            
+                            <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem;">
+                                <h4 style="font-size: 0.9rem; margin-bottom: 0.75rem; color: #64748b;">Recent Recordings</h4>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: #f8fafc; border-radius: 8px;">
+                                        <span style="color: #3b82f6;">🎵</span>
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 0.9rem; font-weight: 500;">Meeting ideas</div>
+                                            <div style="font-size: 0.8rem; color: #64748b;">2:30 - Today 9:15 AM</div>
+                                        </div>
+                                        <button style="padding: 0.25rem 0.5rem; background: none; border: 1px solid #e2e8f0; border-radius: 4px; color: #64748b; cursor: pointer;">▶️</button>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: #f8fafc; border-radius: 8px;">
+                                        <span style="color: #3b82f6;">🎵</span>
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 0.9rem; font-weight: 500;">Project brainstorm</div>
+                                            <div style="font-size: 0.8rem; color: #64748b;">5:45 - Yesterday 3:22 PM</div>
+                                        </div>
+                                        <button style="padding: 0.25rem 0.5rem; background: none; border: 1px solid #e2e8f0; border-radius: 4px; color: #64748b; cursor: pointer;">▶️</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Smart Tags</h3>
+                            <span class="card-badge">AI-Organized</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div>
+                                <input type="text" class="modern-input" placeholder="Search notes..." style="margin-bottom: 1rem;">
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                    <span style="padding: 0.25rem 0.75rem; background: #dbeafe; color: #1d4ed8; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">#meeting</span>
+                                    <span style="padding: 0.25rem 0.75rem; background: #f0fdf4; color: #15803d; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">#project</span>
+                                    <span style="padding: 0.25rem 0.75rem; background: #fef3c7; color: #92400e; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">#ideas</span>
+                                    <span style="padding: 0.25rem 0.75rem; background: #fdf2f8; color: #be185d; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">#personal</span>
+                                </div>
+                            </div>
+                            
+                            <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem;">
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                            <h4 style="font-size: 0.95rem; font-weight: 500;">Q3 Planning Session</h4>
+                                            <span style="font-size: 0.8rem; color: #64748b;">2h ago</span>
+                                        </div>
+                                        <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 0.5rem;">Key objectives and milestones for the upcoming quarter...</p>
+                                        <div style="display: flex; gap: 0.25rem;">
+                                            <span style="padding: 0.125rem 0.5rem; background: #dbeafe; color: #1d4ed8; border-radius: 12px; font-size: 0.7rem;">#meeting</span>
+                                            <span style="padding: 0.125rem 0.5rem; background: #f0fdf4; color: #15803d; border-radius: 12px; font-size: 0.7rem;">#project</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                            <h4 style="font-size: 0.95rem; font-weight: 500;">App Feature Ideas</h4>
+                                            <span style="font-size: 0.8rem; color: #64748b;">1d ago</span>
+                                        </div>
+                                        <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 0.5rem;">Brainstorming session for new user experience improvements...</p>
+                                        <div style="display: flex; gap: 0.25rem;">
+                                            <span style="padding: 0.125rem 0.5rem; background: #fef3c7; color: #92400e; border-radius: 12px; font-size: 0.7rem;">#ideas</span>
+                                            <span style="padding: 0.125rem 0.5rem; background: #f0fdf4; color: #15803d; border-radius: 12px; font-size: 0.7rem;">#project</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Timers Section -->
+            <section class="experiment-section" id="timers">
+                <div class="section-header">
+                    <h1 class="section-title">Timer Experiments</h1>
+                    <p class="section-description">Time management tools using different techniques and visualization approaches</p>
+                </div>
+
+                <div class="ui-grid">
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Pomodoro Timer</h3>
+                            <span class="card-badge">Focus</span>
+                        </div>
+                        <div style="text-align: center; padding: 1rem;">
+                            <div style="width: 150px; height: 150px; border: 8px solid #e2e8f0; border-top: 8px solid #667eea; border-radius: 50%; margin: 0 auto 1rem; position: relative;">
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; font-weight: bold; color: #334155;" id="pomodoro-timer">25:00</div>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <div style="font-weight: 500; margin-bottom: 0.5rem;">Focus Session</div>
+                                <div style="font-size: 0.9rem; color: #64748b;">Session <span id="pomodoro-session">1</span> of 4</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; justify-content: center;">
+                                <button class="modern-button" id="pomodoro-start">▶️ Start</button>
+                                <button class="modern-button" id="pomodoro-pause" style="background: #e5e7eb; color: #374151;">⏸️ Pause</button>
+                                <button class="modern-button" id="pomodoro-stop" style="background: #fee2e2; color: #dc2626;">⏹️ Stop</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Time Blocking</h3>
+                            <span class="card-badge">Structured</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 300px; overflow-y: auto;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #f0fdf4; border-radius: 8px;">
+                                <div>
+                                    <div style="font-weight: 500;">Deep Work</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">9:00 AM - 11:00 AM</div>
+                                </div>
+                                <div class="progress-bar" style="width: 100px;">
+                                    <div class="progress-fill" style="width: 65%;"></div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #f0fdf4; border-radius: 8px;">
+                                <div>
+                                    <div style="font-weight: 500;">Meetings</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">1:00 PM - 3:00 PM</div>
+                                </div>
+                                <div class="progress-bar" style="width: 100px;">
+                                    <div class="progress-fill" style="width: 20%;"></div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background: #f0fdf4; border-radius: 8px;">
+                                <div>
+                                    <div style="font-weight: 500;">Creative Work</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">3:30 PM - 5:00 PM</div>
+                                </div>
+                                <div class="progress-bar" style="width: 100px;">
+                                    <div class="progress-fill" style="width: 0%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Time Tracking</h3>
+                            <span class="card-badge">Analytics</span>
+                        </div>
+                        <div style="height: 200px; display: flex; align-items: flex-end; gap: 1rem; padding: 1rem; border-radius: 12px; background: var(--light);">
+                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                <div style="height: 60%; width: 30px; background: linear-gradient(to top, var(--primary), var(--accent)); border-radius: 4px 4px 0 0;"></div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem;">Mon</div>
+                            </div>
+                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                <div style="height: 80%; width: 30px; background: linear-gradient(to top, var(--primary), var(--accent)); border-radius: 4px 4px 0 0;"></div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem;">Tue</div>
+                            </div>
+                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                <div style="height: 45%; width: 30px; background: linear-gradient(to top, var(--primary), var(--accent)); border-radius: 4px 4px 0 0;"></div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem;">Wed</div>
+                            </div>
+                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                <div style="height: 70%; width: 30px; background: linear-gradient(to top, var(--primary), var(--accent)); border-radius: 4px 4px 0 0;"></div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem;">Thu</div>
+                            </div>
+                            <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
+                                <div style="height: 50%; width: 30px; background: linear-gradient(to top, var(--primary), var(--accent)); border-radius: 4px 4px 0 0;"></div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem;">Fri</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; text-align: center;">
+                            <div>Total Focus Time: <strong>22.5 hours</strong></div>
+                            <div style="font-size: 0.9rem; color: #64748b;">+12% from last week</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section class="experiment-section" id="analytics">
+                <div class="section-header">
+                    <h1 class="section-title">Productivity Analytics</h1>
+                    <p class="section-description">Visualize your productivity patterns and gain insights to optimize your workflow</p>
+                </div>
+
+                <div class="ui-grid">
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Weekly Performance</h3>
+                            <span class="card-badge">Trends</span>
+                        </div>
+                        <div class="graph-container">
+                            <div class="graph-bar" style="height: 30%;"><div class="graph-label">Mon</div></div>
+                            <div class="graph-bar" style="height: 60%;"><div class="graph-label">Tue</div></div>
+                            <div class="graph-bar" style="height: 80%;"><div class="graph-label">Wed</div></div>
+                            <div class="graph-bar" style="height: 70%;"><div class="graph-label">Thu</div></div>
+                            <div class="graph-bar" style="height: 40%;"><div class="graph-label">Fri</div></div>
+                            <div class="graph-bar" style="height: 20%;"><div class="graph-label">Sat</div></div>
+                            <div class="graph-bar" style="height: 10%;"><div class="graph-label">Sun</div></div>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                <span>Avg. Productivity: <strong>78%</strong></span>
+                                <span>Peak: <strong>92%</strong></span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 78%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Task Completion</h3>
+                            <span class="card-badge">Achievements</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span>Completed Tasks</span>
+                                    <span><strong>42</strong> / 50</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 84%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span>On Time</span>
+                                    <span><strong>38</strong> / 42</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 90%;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                                    <span>Overdue</span>
+                                    <span><strong>4</strong> / 42</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 10%; background: var(--danger);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Focus Distribution</h3>
+                            <span class="card-badge">Categories</span>
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1rem; padding: 1rem; justify-content: center; align-items: center; height: 200px;">
+                            <div style="width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(
+                                var(--primary) 0% 40%,
+                                var(--accent) 40% 65%,
+                                var(--success) 65% 85%,
+                                var(--warning) 85% 100%
+                            ); position: relative;"></div>
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <div style="width: 12px; height: 12px; background: var(--primary); border-radius: 2px;"></div>
+                                    <span>Work: 40%</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <div style="width: 12px; height: 12px; background: var(--accent); border-radius: 2px;"></div>
+                                    <span>Learning: 25%</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <div style="width: 12px; height: 12px; background: var(--success); border-radius: 2px;"></div>
+                                    <span>Health: 20%</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <div style="width: 12px; height: 12px; background: var(--warning); border-radius: 2px;"></div>
+                                    <span>Personal: 15%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ui-card">
+                        <div class="card-header">
+                            <h3 class="card-title">AI Recommendations</h3>
+                            <span class="card-badge">Optimization</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem;">
+                            <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                                <div style="background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">1</div>
+                                <div>
+                                    <div style="font-weight: 500;">Schedule Deep Work Blocks</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">Based on your focus patterns, allocate 2-hour blocks in the morning</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                                <div style="background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">2</div>
+                                <div>
+                                    <div style="font-weight: 500;">Reduce Meeting Time</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">You spend 35% of your time in meetings - aim to reduce to 25%</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: flex-start; gap: 1rem;">
+                                <div style="background: var(--primary); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">3</div>
+                                <div>
+                                    <div style="font-weight: 500;">Take More Breaks</div>
+                                    <div style="font-size: 0.9rem; color: #64748b;">Your productivity declines after 90 minutes of continuous work</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="ai-assistant">
+        <div class="ai-button" id="ai-assistant-button">
+            <i class="fas fa-robot"></i>
+        </div>
+    </div>
+
+    <div class="ai-chat-container" id="ai-chat-container">
+        <div class="chat-header">
+            <span>Productivity Assistant</span>
+            <span id="close-chat"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="message assistant">
+                Hi there! I'm your productivity assistant. How can I help you today?
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="chat-input" placeholder="Ask me anything...">
+            <button id="send-message"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Remove active class from all items
+                document.querySelectorAll('.nav-item').forEach(i => {
+                    i.classList.remove('active');
+                });
+                
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Hide all sections
+                document.querySelectorAll('.experiment-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show the selected section
+                const sectionId = this.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+
+        // Calendar generation
+        function generateCalendar(year, month) {
+            const calendarGrid = document.getElementById('calendar-grid');
+            calendarGrid.innerHTML = '';
+            
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            
+            // Add day headers
+            days.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.textContent = day;
+                dayHeader.style.textAlign = 'center';
+                dayHeader.style.padding = '0.5rem';
+                dayHeader.style.background = '#f1f5f9';
+                dayHeader.style.fontWeight = '600';
+                calendarGrid.appendChild(dayHeader);
+            });
+            
+            // Get first day of month
+            const firstDay = new Date(year, month, 1).getDay();
+            
+            // Get days in month
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Add empty cells for days before first day
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.classList.add('calendar-day');
+                calendarGrid.appendChild(emptyCell);
+            }
+            
+            // Add days
+            const today = new Date();
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayCell = document.createElement('div');
+                dayCell.classList.add('calendar-day');
+                dayCell.textContent = i;
+                
+                // Highlight today
+                if (year === today.getFullYear() && month === today.getMonth() && i === today.getDate()) {
+                    dayCell.classList.add('today');
+                }
+                
+                calendarGrid.appendChild(dayCell);
+            }
+            
+            // Update month header
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('current-month').textContent = `${monthNames[month]} ${year}`;
+        }
+        
+        // Initialize calendar
+        const today = new Date();
+        generateCalendar(today.getFullYear(), today.getMonth());
+        
+        // Month navigation
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
+        
+        function changeMonth(direction) {
+            currentMonth += direction;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            generateCalendar(currentYear, currentMonth);
+        }
+        
+        // Pomodoro Timer
+        let pomodoroInterval;
+        let pomodoroTime = 25 * 60; // 25 minutes in seconds
+        let pomodoroRunning = false;
+        let pomodoroSession = 1;
+        
+        document.getElementById('pomodoro-start').addEventListener('click', startPomodoro);
+        document.getElementById('pomodoro-pause').addEventListener('click', pausePomodoro);
+        document.getElementById('pomodoro-stop').addEventListener('click', stopPomodoro);
+        
+        function startPomodoro() {
+            if (pomodoroRunning) return;
+            
+            pomodoroRunning = true;
+            pomodoroInterval = setInterval(() => {
+                pomodoroTime--;
+                updatePomodoroDisplay();
+                
+                if (pomodoroTime <= 0) {
+                    clearInterval(pomodoroInterval);
+                    pomodoroSession++;
+                    document.getElementById('pomodoro-session').textContent = pomodoroSession;
+                    
+                    if (pomodoroSession <= 4) {
+                        // Short break after each session
+                        pomodoroTime = 5 * 60;
+                        startPomodoro();
+                        showNotification('Take a 5-minute break!', 'success');
+                    } else {
+                        // Long break after 4 sessions
+                        pomodoroSession = 1;
+                        pomodoroTime = 15 * 60;
+                        document.getElementById('pomodoro-session').textContent = pomodoroSession;
+                        startPomodoro();
+                        showNotification('Take a 15-minute break!', 'success');
+                    }
+                }
+            }, 1000);
+        }
+        
+        function pausePomodoro() {
+            clearInterval(pomodoroInterval);
+            pomodoroRunning = false;
+        }
+        
+        function stopPomodoro() {
+            clearInterval(pomodoroInterval);
+            pomodoroRunning = false;
+            pomodoroTime = 25 * 60;
+            pomodoroSession = 1;
+            document.getElementById('pomodoro-session').textContent = pomodoroSession;
+            updatePomodoroDisplay();
+        }
+        
+        function updatePomodoroDisplay() {
+            const minutes = Math.floor(pomodoroTime / 60);
+            const seconds = pomodoroTime % 60;
+            document.getElementById('pomodoro-timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Show notification
+        function showNotification(message, type) {
+            const notificationContainer = document.createElement('div');
+            notificationContainer.classList.add('notification', type);
+            notificationContainer.textContent = message;
+            
+            document.body.appendChild(notificationContainer);
+            
+            setTimeout(() => {
+                notificationContainer.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(notificationContainer);
+                }, 300);
+            }, 3000);
+        }
+        
+        // Add task functionality
+        function addTask(type) {
+            const input = document.getElementById(`new-task-${type}`);
+            const taskText = input.value.trim();
+            
+            if (taskText) {
+                if (type === 'minimal') {
+                    const todoList = document.querySelector('.todo-minimal');
+                    const newItem = document.createElement('div');
+                    newItem.classList.add('todo-item');
+                    
+                    const taskId = `task-${Date.now()}`;
+                    newItem.innerHTML = `
+                        <input type="checkbox" class="checkbox-modern" id="${taskId}">
+                        <label for="${taskId}">${taskText}</label>
+                    `;
+                    
+                    todoList.appendChild(newItem);
+                    input.value = '';
+                    
+                    // Update task count
+                    const taskCount = document.getElementById('tasks-completed');
+                    const currentCount = parseInt(taskCount.textContent);
+                    taskCount.textContent = `${currentCount + 1} Tasks`;
+                }
+            }
+        }
+        
+        // AI Assistant
+        const aiButton = document.getElementById('ai-assistant-button');
+        const aiChat = document.getElementById('ai-chat-container');
+        const closeChat = document.getElementById('close-chat');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendMessage = document.getElementById('send-message');
+        
+        aiButton.addEventListener('click', () => {
+            aiChat.classList.toggle('open');
+        });
+        
+        closeChat.addEventListener('click', () => {
+            aiChat.classList.remove('open');
+        });
+        
+        sendMessage.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+        
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                // Add user message
+                const userMessage = document.createElement('div');
+                userMessage.classList.add('message', 'user');
+                userMessage.textContent = message;
+                chatMessages.appendChild(userMessage);
+                
+                // Clear input
+                chatInput.value = '';
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const aiResponse = document.createElement('div');
+                    aiResponse.classList.add('message', 'assistant');
+                    
+                    // Simple responses based on keywords
+                    if (message.toLowerCase().includes('task') || message.toLowerCase().includes('todo')) {
+                        aiResponse.textContent = "I can help you manage tasks! Try creating a new task in the Todo section.";
+                    } else if (message.toLowerCase().includes('calendar') || message.toLowerCase().includes('schedule')) {
+                        aiResponse.textContent = "Check out the Calendar section to manage your schedule effectively.";
+                    } else if (message.toLowerCase().includes('focus') || message.toLowerCase().includes('timer')) {
+                        aiResponse.textContent = "The Pomodoro timer in the Timers section can help you stay focused in intervals.";
+                    } else {
+                        aiResponse.textContent = "I'm here to help you boost your productivity. How can I assist you with your tasks today?";
+                    }
+                    
+                    chatMessages.appendChild(aiResponse);
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+            }
+        }
+        
+        // Initialize
+        updatePomodoroDisplay();
+        
+        // Generate heatmap
+        const heatmapContainer = document.querySelector('#calendar + .ui-card > div');
+        for (let i = 0; i < 364; i++) { // 52 weeks * 7 days
+            const cell = document.createElement('div');
+            cell.classList.add('heatmap-cell');
+            
+            // Random activity for demo
+            const activity = Math.floor(Math.random() * 5);
+            if (activity > 0) {
+                cell.classList.add(`active-${activity}`);
+            }
+            
+            heatmapContainer.appendChild(cell);
+        }
+        
+        // Theme toggle
+        const themeToggle = document.querySelector('.theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                document.body.style.background = 'linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%)';
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                document.body.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)';
+            }
+        });
+    </script>
+</body>
+</html>
