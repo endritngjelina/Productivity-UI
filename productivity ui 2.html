@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity UI Experiments Hub</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #48bb78;
+            --warning: #ed8936;
+            --error: #f56565;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray-100: #f7fafc;
+            --gray-200: #edf2f7;
+            --gray-300: #e2e8f0;
+            --gray-400: #cbd5e0;
+            --gray-500: #a0aec0;
+            --gray-600: #718096;
+            --gray-700: #4a5568;
+            --gray-800: #2d3748;
+            --gray-900: #1a202c;
+            --shadow: 0 10px 25px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .ui-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .ui-btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .ui-btn:hover, .ui-btn.active {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+        }
+
+        .productivity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .productivity-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .productivity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .productivity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .style-indicator {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .minimalist { background: #e6fffa; color: #234e52; }
+        .kanban { background: #fef5e7; color: #744210; }
+        .calendar { background: #e3f2fd; color: #1565c0; }
+        .timeline { background: #f3e5f5; color: #4a148c; }
+
+        /* Todo List Styles */
+        .todo-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .todo-input input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .todo-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .add-btn {
+            padding: 12px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .add-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .todo-list {
+            list-style: none;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            background: var(--gray-50);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+        }
+
+        .todo-item:hover {
+            background: var(--gray-100);
+            border-left-color: var(--primary);
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .todo-checkbox {
+            margin-right: 1rem;
+            transform: scale(1.2);
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        .todo-priority {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .priority-high { background: #fed7d7; color: #c53030; }
+        .priority-medium { background: #feebc8; color: #dd6b20; }
+        .priority-low { background: #c6f6d5; color: #25855a; }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: var(--error);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .delete-btn:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        /* Kanban Styles */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .kanban-column {
+            background: var(--gray-100);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            min-height: 300px;
+        }
+
+        .column-header {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .kanban-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: grab;
+            transition: var(--transition);
+        }
+
+        .kanban-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .kanban-card:active {
+            cursor: grabbing;
+        }
+
+        /* Calendar Styles */
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-month {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+            color: var(--gray-600);
+        }
+
+        .nav-btn:hover {
+            background: var(--gray-100);
+            color: var(--primary);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: var(--gray-200);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        .calendar-day {
+            background: white;
+            padding: 1rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            min-height: 60px;
+        }
+
+        .calendar-day:hover {
+            background: var(--gray-50);
+        }
+
+        .calendar-day.today {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* Timeline Styles */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--primary);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.75rem;
+            top: 1rem;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid white;
+        }
+
+        .timeline-time {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content {
+            font-weight: 600;
+        }
+
+        /* Analytics Dashboard */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .productivity-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dark Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.2);
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="container">
+        <header class="header">
+            <h1>Productivity UI Experiments Hub</h1>
+            <p>Explore different interface paradigms for productivity tools. Compare minimalist, kanban, calendar, and timeline approaches to task management.</p>
+        </header>
+
+        <div class="ui-selector">
+            <button class="ui-btn active" onclick="showUI('all')">All Interfaces</button>
+            <button class="ui-btn" onclick="showUI('minimalist')">Minimalist</button>
+            <button class="ui-btn" onclick="showUI('kanban')">Kanban Board</button>
+            <button class="ui-btn" onclick="showUI('calendar')">Calendar View</button>
+            <button class="ui-btn" onclick="showUI('timeline')">Timeline View</button>
+        </div>
+
+        <div class="productivity-grid" id="mainGrid">
+            <!-- Minimalist Todo List -->
+            <div class="productivity-card fade-in" data-style="minimalist">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-check-circle"></i>
+                        Clean Todo List
+                    </h2>
+                    <span class="style-indicator minimalist">Minimalist</span>
+                </div>
+                <div class="todo-input">
+                    <input type="text" id="todoInput" placeholder="Add a new task..." onkeypress="handleTodoKeyPress(event)">
+                    <select id="prioritySelect">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                    <button class="add-btn" onclick="addTodo()">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <ul class="todo-list" id="todoList"></ul>
+            </div>
+
+            <!-- Kanban Board -->
+            <div class="productivity-card fade-in" data-style="kanban">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-columns"></i>
+                        Kanban Board
+                    </h2>
+                    <span class="style-indicator kanban">Kanban</span>
+                </div>
+                <div class="kanban-board">
+                    <div class="kanban-column">
+                        <div class="column-header">To Do</div>
+                        <div id="todoColumn"></div>
+                        <input type="text" placeholder="Add card..." onkeypress="handleKanbanKeyPress(event, 'todo')" style="width: 100%; padding: 8px; border: none; border-radius: 4px; margin-top: 8px;">
+                    </div>
+                    <div class="kanban-column">
+                        <div class="column-header">In Progress</div>
+                        <div id="progressColumn"></div>
+                    </div>
+                    <div class="kanban-column">
+                        <div class="column-header">Done</div>
+                        <div id="doneColumn"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar View -->
+            <div class="productivity-card fade-in" data-style="calendar">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-calendar-alt"></i>
+                        Calendar Planner
+                    </h2>
+                    <span class="style-indicator calendar">Calendar</span>
+                </div>
+                <div class="calendar-nav">
+                    <button class="nav-btn" onclick="changeMonth(-1)">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span class="calendar-month" id="currentMonth"></span>
+                    <button class="nav-btn" onclick="changeMonth(1)">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+                <input type="text" id="eventInput" placeholder="Add event for selected date..." style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; margin-top: 1rem;" onkeypress="handleEventKeyPress(event)">
+            </div>
+
+            <!-- Timeline View -->
+            <div class="productivity-card fade-in" data-style="timeline">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <i class="fas fa-clock"></i>
+                        Timeline Tracker
+                    </h2>
+                    <span class="style-indicator timeline">Timeline</span>
+                </div>
+                <div class="timeline" id="timeline"></div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                    <input type="time" id="timeInput" style="padding: 8px; border: 2px solid #e2e8f0; border-radius: 8px;">
+                    <input type="text" id="activityInput" placeholder="Add activity..." style="flex: 1; padding: 8px; border: 2px solid #e2e8f0; border-radius: 8px;" onkeypress="handleActivityKeyPress(event)">
+                    <button class="add-btn" onclick="addActivity()">Add</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard -->
+        <div class="analytics-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalTasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="completedTasks">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="productivity">0%</div>
+                <div class="stat-label">Productivity</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="streak">0</div>
+                <div class="stat-label">Day Streak</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global State Management
+        const state = {
+            todos: [],
+            kanbanCards: { todo: [], progress: [], done: [] },
+            events: {},
+            activities: [],
+            currentMonth: new Date().getMonth(),
+            currentYear: new Date().getFullYear(),
+            selectedDate: null,
+            theme: 'light'
+        };
+
+        // Initialize the application
+        function init() {
+            loadSampleData();
+            renderTodos();
+            renderKanban();
+            renderCalendar();
+            renderTimeline();
+            updateAnalytics();
+        }
+
+        // Load sample data
+        function loadSampleData() {
+            state.todos = [
+                { id: 1, text: 'Review quarterly reports', completed: false, priority: 'high' },
+                { id: 2, text: 'Schedule team meeting', completed: true, priority: 'medium' },
+                { id: 3, text: 'Update project documentation', completed: false, priority: 'low' }
+            ];
+
+            state.kanbanCards.todo = [
+                { id: 1, text: 'Design new landing page' },
+                { id: 2, text: 'Implement user authentication' }
+            ];
+            state.kanbanCards.progress = [
+                { id: 3, text: 'Code review for API endpoints' }
+            ];
+            state.kanbanCards.done = [
+                { id: 4, text: 'Set up CI/CD pipeline' }
+            ];
+
+            const today = new Date();
+            const todayKey = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+            state.events[todayKey] = ['Product launch meeting', 'Team retrospective'];
+
+            state.activities = [
+                { time: '09:00', activity: 'Morning standup', id: 1 },
+                { time: '10:30', activity: 'Client presentation prep', id: 2 },
+                { time: '14:00', activity: 'Code review session', id: 3 }
+            ];
+        }
+
+        // Todo List Functions
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const priority = document.getElementById('prioritySelect').value;
+            const text = input.value.trim();
+            
+            if (text) {
+                const todo = {
+                    id: Date.now(),
+                    text,
+                    completed: false,
+                    priority
+                };
+                state.todos.push(todo);
+                input.value = '';
+                renderTodos();
+                updateAnalytics();
+            }
+        }
+
+        function handleTodoKeyPress(event) {
+            if (event.key === 'Enter') {
+                addTodo();
+            }
+        }
+
+        function toggleTodo(id) {
+            const todo = state.todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                renderTodos();
+                updateAnalytics();
+            }
+        }
+
+        function deleteTodo(id) {
+            state.todos = state.todos.filter(t => t.id !== id);
+            renderTodos();
+            updateAnalytics();
+        }
+
+        function renderTodos() {
+            const list = document.getElementById('todoList');
+            list.innerHTML = '';
+            
+            state.todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''} 
+                           onchange="toggleTodo(${todo.id})">
+                    <span class="todo-text">${todo.text}</span>
+                    <span class="todo-priority priority-${todo.priority}">${todo.priority}</span>
+                    <button class="delete-btn" onclick="deleteTodo(${todo.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // Kanban Functions
+        function handleKanbanKeyPress(event, column) {
+            if (event.key === 'Enter') {
+                const text = event.target.value.trim();
+                if (text) {
+                    const card = { id: Date.now(), text };
+                    state.kanbanCards[column].push(card);
+                    event.target.value = '';
+                    renderKanban();
+                }
+            }
+        }
+
+        function renderKanban() {
+            ['todo', 'progress', 'done'].forEach(column => {
+                const container = document.getElementById(column + 'Column');
+                container.innerHTML = '';
+                
+                state.kanbanCards[column].forEach(card => {
+                    const div = document.createElement('div');
+                    div.className = 'kanban-card';
+                    div.draggable = true;
+                    div.innerHTML = `
+                        ${card.text}
+                        <button style="float: right; background: none; border: none; color: #f56565; cursor: pointer;" 
+                                onclick="deleteKanbanCard('${column}', ${card.id})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    div.ondragstart = (e) => {
+                        e.dataTransfer.setData('text/plain', JSON.stringify({ card, from: column }));
+                    };
+                    container.appendChild(div);
+                });
+            });
+
+            // Add drop zones
+            ['todo', 'progress', 'done'].forEach(column => {
+                const container = document.getElementById(column + 'Column');
+                container.ondragover = (e) => e.preventDefault();
+                container.ondrop = (e) => {
+                    e.preventDefault();
+                    const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                    if (data.from !== column) {
+                        state.kanbanCards[data.from] = state.kanbanCards[data.from].filter(c => c.id !== data.card.id);
+                        state.kanbanCards[column].push(data.card);
+                        renderKanban();
+                    }
+                };
+            });
+        }
+
+        function deleteKanbanCard(column, id) {
+            state.kanbanCards[column] = state.kanbanCards[column].filter(c => c.id !== id);
+            renderKanban();
+        }
+
+        // Calendar Functions
+        function renderCalendar() {
+            const grid = document.getElementById('calendarGrid');
+            const monthLabel = document.getElementById('currentMonth');
+            
+            const date = new Date(state.currentYear, state.currentMonth, 1);
+            const daysInMonth = new Date(state.currentYear, state.currentMonth + 1, 0).getDate();
+            const firstDay = date.getDay();
+            
+            monthLabel.textContent = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            
+            grid.innerHTML = '';
+            
+            // Add day headers
+            ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.textContent = day;
+                dayHeader.style.fontWeight = '700';
+                dayHeader.style.color = '#718096';
+                dayHeader.style.padding = '0.5rem';
+                dayHeader.style.background = '#f7fafc';
+                grid.appendChild(dayHeader);
+            });
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day';
+                emptyDay.style.opacity = '0.3';
+                grid.appendChild(emptyDay);
+            }
+            
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                const dayKey = `${state.currentYear}-${state.currentMonth}-${day}`;
+                const today = new Date();
+                
+                if (today.getDate() === day && today.getMonth() === state.currentMonth && today.getFullYear() === state.currentYear) {
+                    dayElement.classList.add('today');
+                }
+                
+                if (state.events[dayKey]) {
+                    dayElement.classList.add('has-event');
+                    dayElement.title = state.events[dayKey].join(', ');
+                }
+                
+                dayElement.onclick = () => selectDate(day);
+                grid.appendChild(dayElement);
+            }
+        }
+
+        function changeMonth(delta) {
+            state.currentMonth += delta;
+            if (state.currentMonth < 0) {
+                state.currentMonth = 11;
+                state.currentYear--;
+            } else if (state.currentMonth > 11) {
+                state.currentMonth = 0;
+                state.currentYear++;
+            }
+            renderCalendar();
+        }
+
+        function selectDate(day) {
+            state.selectedDate = day;
+            document.getElementById('eventInput').placeholder = `Add event for ${state.currentMonth + 1}/${day}/${state.currentYear}...`;
+        }
+
+        function handleEventKeyPress(event) {
+            if (event.key === 'Enter' && state.selectedDate) {
+                const text = event.target.value.trim();
+                if (text) {
+                    const dayKey = `${state.currentYear}-${state.currentMonth}-${state.selectedDate}`;
+                    if (!state.events[dayKey]) {
+                        state.events[dayKey] = [];
+                    }
+                    state.events[dayKey].push(text);
+                    event.target.value = '';
+                    renderCalendar();
+                }
+            }
+        }
+
+        // Timeline Functions
+        function addActivity() {
+            const timeInput = document.getElementById('timeInput');
+            const activityInput = document.getElementById('activityInput');
+            const time = timeInput.value;
+            const activity = activityInput.value.trim();
+            
+            if (time && activity) {
+                const newActivity = {
+                    time,
+                    activity,
+                    id: Date.now()
+                };
+                state.activities.push(newActivity);
+                state.activities.sort((a, b) => a.time.localeCompare(b.time));
+                timeInput.value = '';
+                activityInput.value = '';
+                renderTimeline();
+            }
+        }
+
+        function handleActivityKeyPress(event) {
+            if (event.key === 'Enter') {
+                addActivity();
+            }
+        }
+
+        function deleteActivity(id) {
+            state.activities = state.activities.filter(a => a.id !== id);
+            renderTimeline();
+        }
+
+        function renderTimeline() {
+            const timeline = document.getElementById('timeline');
+            timeline.innerHTML = '';
+            
+            state.activities.forEach(activity => {
+                const item = document.createElement('div');
+                item.className = 'timeline-item';
+                item.innerHTML = `
+                    <div class="timeline-time">${activity.time}</div>
+                    <div class="timeline-content">${activity.activity}</div>
+                    <button style="position: absolute; top: 10px; right: 10px; background: none; border: none; color: #f56565; cursor: pointer;" 
+                            onclick="deleteActivity(${activity.id})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                timeline.appendChild(item);
+            });
+        }
+
+        // Analytics Functions
+        function updateAnalytics() {
+            const totalTasks = state.todos.length;
+            const completedTasks = state.todos.filter(t => t.completed).length;
+            const productivity = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            const streak = calculateStreak();
+            
+            document.getElementById('totalTasks').textContent = totalTasks;
+            document.getElementById('completedTasks').textContent = completedTasks;
+            document.getElementById('productivity').textContent = productivity + '%';
+            document.getElementById('streak').textContent = streak;
+        }
+
+        function calculateStreak() {
+            // Simple streak calculation based on completed tasks
+            return Math.min(state.todos.filter(t => t.completed).length, 30);
+        }
+
+        // UI Control Functions
+        function showUI(type) {
+            const cards = document.querySelectorAll('.productivity-card');
+            const buttons = document.querySelectorAll('.ui-btn');
+            
+            // Update active button
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide cards
+            cards.forEach(card => {
+                if (type === 'all' || card.dataset.style === type) {
+                    card.style.display = 'block';
+                    card.classList.add('fade-in');
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Theme Toggle Function
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.querySelector('.theme-toggle');
+            
+            if (state.theme === 'light') {
+                // Switch to dark theme
+                body.style.background = 'linear-gradient(135deg, #1a202c 0%, #2d3748 100%)';
+                document.documentElement.style.setProperty('--gray-800', '#e2e8f0');
+                document.documentElement.style.setProperty('--gray-600', '#cbd5e0');
+                document.documentElement.style.setProperty('--gray-100', '#2d3748');
+                document.documentElement.style.setProperty('--gray-50', '#4a5568');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                state.theme = 'dark';
+                
+                // Update card backgrounds for dark theme
+                document.querySelectorAll('.productivity-card').forEach(card => {
+                    card.style.background = '#2d3748';
+                    card.style.color = '#e2e8f0';
+                });
+                
+                document.querySelectorAll('.stat-card').forEach(card => {
+                    card.style.background = '#2d3748';
+                    card.style.color = '#e2e8f0';
+                });
+            } else {
+                // Switch to light theme
+                body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                document.documentElement.style.setProperty('--gray-800', '#2d3748');
+                document.documentElement.style.setProperty('--gray-600', '#718096');
+                document.documentElement.style.setProperty('--gray-100', '#f7fafc');
+                document.documentElement.style.setProperty('--gray-50', '#f7fafc');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                state.theme = 'light';
+                
+                // Reset card backgrounds for light theme
+                document.querySelectorAll('.productivity-card').forEach(card => {
+                    card.style.background = 'white';
+                    card.style.color = '#2d3748';
+                });
+                
+                document.querySelectorAll('.stat-card').forEach(card => {
+                    card.style.background = 'white';
+                    card.style.color = '#2d3748';
+                });
+            }
+        }
+
+        // Advanced Features
+
+        // Export/Import Data
+        function exportData() {
+            const data = {
+                todos: state.todos,
+                kanbanCards: state.kanbanCards,
+                events: state.events,
+                activities: state.activities
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'productivity-data.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        state.todos = data.todos || [];
+                        state.kanbanCards = data.kanbanCards || { todo: [], progress: [], done: [] };
+                        state.events = data.events || {};
+                        state.activities = data.activities || [];
+                        
+                        renderTodos();
+                        renderKanban();
+                        renderCalendar();
+                        renderTimeline();
+                        updateAnalytics();
+                        
+                        showNotification('Data imported successfully!', 'success');
+                    } catch (error) {
+                        showNotification('Error importing data. Please check the file format.', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                background: ${type === 'success' ? 'var(--success)' : type === 'error' ? 'var(--error)' : 'var(--primary)'};
+                color: white;
+                border-radius: var(--border-radius);
+                box-shadow: var(--shadow);
+                z-index: 1000;
+                animation: slideInRight 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Search and Filter Functions
+        function filterTodos(query) {
+            const filteredTodos = state.todos.filter(todo => 
+                todo.text.toLowerCase().includes(query.toLowerCase())
+            );
+            renderFilteredTodos(filteredTodos);
+        }
+
+        function renderFilteredTodos(todos) {
+            const list = document.getElementById('todoList');
+            list.innerHTML = '';
+            
+            todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                li.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''} 
+                           onchange="toggleTodo(${todo.id})">
+                    <span class="todo-text">${todo.text}</span>
+                    <span class="todo-priority priority-${todo.priority}">${todo.priority}</span>
+                    <button class="delete-btn" onclick="deleteTodo(${todo.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // Keyboard Shortcuts
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key) {
+                        case '1':
+                            e.preventDefault();
+                            showUI('minimalist');
+                            break;
+                        case '2':
+                            e.preventDefault();
+                            showUI('kanban');
+                            break;
+                        case '3':
+                            e.preventDefault();
+                            showUI('calendar');
+                            break;
+                        case '4':
+                            e.preventDefault();
+                            showUI('timeline');
+                            break;
+                        case 's':
+                            e.preventDefault();
+                            exportData();
+                            break;
+                        case 't':
+                            e.preventDefault();
+                            toggleTheme();
+                            break;
+                    }
+                }
+            });
+        }
+
+        // Auto-save functionality
+        function saveToStorage() {
+            const data = {
+                todos: state.todos,
+                kanbanCards: state.kanbanCards,
+                events: state.events,
+                activities: state.activities,
+                theme: state.theme
+            };
+            // Note: Using in-memory storage instead of localStorage for Claude.ai compatibility
+            window.productivityData = data;
+        }
+
+        function loadFromStorage() {
+            if (window.productivityData) {
+                const data = window.productivityData;
+                state.todos = data.todos || [];
+                state.kanbanCards = data.kanbanCards || { todo: [], progress: [], done: [] };
+                state.events = data.events || {};
+                state.activities = data.activities || [];
+                state.theme = data.theme || 'light';
+            }
+        }
+
+        // Periodic auto-save
+        setInterval(saveToStorage, 30000); // Save every 30 seconds
+
+        // Performance Monitoring
+        function measurePerformance() {
+            const startTime = performance.now();
+            
+            renderTodos();
+            renderKanban();
+            renderCalendar();
+            renderTimeline();
+            
+            const endTime = performance.now();
+            console.log(`Render time: ${endTime - startTime} milliseconds`);
+        }
+
+        // Add CSS animations for notifications
+        const additionalStyles = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+            
+            .productivity-card {
+                animation: fadeInUp 0.6s ease-out;
+            }
+            
+            .productivity-card:nth-child(2) { animation-delay: 0.1s; }
+            .productivity-card:nth-child(3) { animation-delay: 0.2s; }
+            .productivity-card:nth-child(4) { animation-delay: 0.3s; }
+        `;
+
+        // Add the additional styles to the document
+        const styleSheet = document.createElement('style');
+        styleSheet.textContent = additionalStyles;
+        document.head.appendChild(styleSheet);
+
+        // Initialize everything when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFromStorage();
+            init();
+            setupKeyboardShortcuts();
+            
+            // Add export/import buttons to the header
+            const header = document.querySelector('.header');
+            const controlsDiv = document.createElement('div');
+            controlsDiv.style.cssText = 'margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;';
+            controlsDiv.innerHTML = `
+                <button onclick="exportData()" style="padding: 8px 16px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                    <i class="fas fa-download"></i> Export Data
+                </button>
+                <label style="padding: 8px 16px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                    <i class="fas fa-upload"></i> Import Data
+                    <input type="file" accept=".json" onchange="importData(event)" style="display: none;">
+                </label>
+                <button onclick="measurePerformance()" style="padding: 8px 16px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                    <i class="fas fa-chart-line"></i> Performance Test
+                </button>
+            `;
+            header.appendChild(controlsDiv);
+            
+            // Add keyboard shortcuts help
+            const shortcutsDiv = document.createElement('div');
+            shortcutsDiv.style.cssText = 'margin-top: 1rem; color: rgba(255,255,255,0.8); font-size: 0.875rem; text-align: center;';
+            shortcutsDiv.innerHTML = `
+                <strong>Keyboard Shortcuts:</strong> Ctrl/Cmd + 1-4 (Switch Views) | Ctrl/Cmd + S (Export) | Ctrl/Cmd + T (Toggle Theme)
+            `;
+            header.appendChild(shortcutsDiv);
+            
+            showNotification('Welcome to Productivity UI Hub!', 'success');
+        });
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
