@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productivity UI Experiments Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            padding: 60px 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #fff, #f0f8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .ui-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .ui-option {
+            padding: 12px 24px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .ui-option:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .ui-option.active {
+            background: white;
+            color: #667eea;
+            border-color: white;
+            transform: scale(1.05);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .ui-showcase {
+            display: none;
+            animation: slideIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .ui-showcase.active {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .widget {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .widget:hover {
+            transform: translateY(-8px);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.15),
+                0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget:hover::before {
+            opacity: 1;
+        }
+
+        .widget h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        /* Todo List Styles */
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .todo-item:hover {
+            background: #e2e8f0;
+            transform: translateX(5px);
+            border-left-color: #667eea;
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+            background: #f0fff4;
+            border-left-color: #48bb78;
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #cbd5e0;
+            border-radius: 50%;
+            margin-right: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .todo-checkbox.checked {
+            background: #48bb78;
+            border-color: #48bb78;
+        }
+
+        .todo-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Kanban Board Styles */
+        .kanban-board {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+        }
+
+        .kanban-column {
+            min-width: 250px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .kanban-header {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .kanban-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid #e2e8f0;
+        }
+
+        .kanban-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .kanban-card.high-priority {
+            border-left-color: #f56565;
+        }
+
+        .kanban-card.medium-priority {
+            border-left-color: #ed8936;
+        }
+
+        .kanban-card.low-priority {
+            border-left-color: #48bb78;
+        }
+
+        /* Calendar Styles */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .calendar-day:hover {
+            background: #e2e8f0;
+            transform: scale(1.05);
+        }
+
+        .calendar-day.today {
+            background: #667eea;
+            color: white;
+        }
+
+        .calendar-day.has-event {
+            background: #ffd6cc;
+            color: #c53030;
+        }
+
+        /* Time Tracker Styles */
+        .time-display {
+            font-size: 3rem;
+            font-weight: 300;
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'SF Mono', Monaco, monospace;
+            color: #2d3748;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .timer-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .timer-btn.primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .timer-btn.primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .timer-btn.secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .timer-btn.secondary:hover {
+            background: #cbd5e0;
+        }
+
+        /* Add Input Styles */
+        .add-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .add-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .add-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .add-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Progress Ring */
+        .progress-ring {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+        }
+
+        .progress-ring-circle {
+            fill: none;
+            stroke: #e2e8f0;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dasharray 0.5s ease;
+        }
+
+        .progress-ring-progress {
+            stroke: #667eea;
+            stroke-dasharray: 0 314;
+            transition: stroke-dasharray 0.5s ease;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.urgent {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .status-badge.normal {
+            background: #bee3f8;
+            color: #2b6cb0;
+        }
+
+        .status-badge.low {
+            background: #c6f6d5;
+            color: #2f855a;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .ui-showcase.active {
+                grid-template-columns: 1fr;
+            }
+            
+            .kanban-board {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Productivity UI Experiments</h1>
+        <p>Experience multiple interface paradigms designed for modern productivity workflows</p>
+        <div class="ui-selector">
+            <div class="ui-option active" data-ui="todo">Todo Management</div>
+            <div class="ui-option" data-ui="kanban">Kanban Board</div>
+            <div class="ui-option" data-ui="calendar">Calendar View</div>
+            <div class="ui-option" data-ui="timer">Time Tracking</div>
+            <div class="ui-option" data-ui="dashboard">Analytics Dashboard</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Todo Management UI -->
+        <div class="ui-showcase active" id="todo-ui">
+            <div class="widget">
+                <h3>Classic Todo List</h3>
+                <input type="text" class="add-input" id="todo-input" placeholder="Add a new task...">
+                <button class="add-btn" onclick="addTodo()">Add Task</button>
+                <div id="todo-list">
+                    <div class="todo-item">
+                        <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                        <span>Review quarterly reports</span>
+                    </div>
+                    <div class="todo-item completed">
+                        <div class="todo-checkbox checked" onclick="toggleTodo(this)"></div>
+                        <span>Update project documentation</span>
+                    </div>
+                    <div class="todo-item">
+                        <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                        <span>Prepare presentation slides</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget">
+                <h3>Priority Matrix</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div style="background: #fed7d7; padding: 15px; border-radius: 8px;">
+                        <strong style="color: #c53030;">Urgent & Important</strong>
+                        <div style="margin-top: 10px; font-size: 14px;">
+                            • Client presentation deadline
+                        </div>
+                    </div>
+                    <div style="background: #feebc8; padding: 15px; border-radius: 8px;">
+                        <strong style="color: #c05621;">Important, Not Urgent</strong>
+                        <div style="margin-top: 10px; font-size: 14px;">
+                            • Strategic planning session
+                        </div>
+                    </div>
+                    <div style="background: #bee3f8; padding: 15px; border-radius: 8px;">
+                        <strong style="color: #2b6cb0;">Urgent, Not Important</strong>
+                        <div style="margin-top: 10px; font-size: 14px;">
+                            • Email responses
+                        </div>
+                    </div>
+                    <div style="background: #c6f6d5; padding: 15px; border-radius: 8px;">
+                        <strong style="color: #2f855a;">Neither Urgent nor Important</strong>
+                        <div style="margin-top: 10px; font-size: 14px;">
+                            • Social media updates
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget">
+                <h3>Focus Mode Timer</h3>
+                <svg class="progress-ring">
+                    <circle class="progress-ring-circle" cx="60" cy="60" r="50"></circle>
+                    <circle class="progress-ring-progress" cx="60" cy="60" r="50"></circle>
+                </svg>
+                <div class="time-display" id="focus-timer">25:00</div>
+                <div class="timer-controls">
+                    <button class="timer-btn primary" onclick="startFocusTimer()">Start Focus</button>
+                    <button class="timer-btn secondary" onclick="pauseFocusTimer()">Pause</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kanban Board UI -->
+        <div class="ui-showcase" id="kanban-ui">
+            <div class="widget" style="grid-column: 1 / -1;">
+                <h3>Project Management Board</h3>
+                <div class="kanban-board">
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            📝 Backlog <span style="background: #e2e8f0; color: #4a5568; padding: 2px 8px; border-radius: 12px; font-size: 12px;">4</span>
+                        </div>
+                        <div class="kanban-card high-priority">
+                            <strong>API Integration</strong>
+                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">Due: Tomorrow</div>
+                            <span class="status-badge urgent">High Priority</span>
+                        </div>
+                        <div class="kanban-card medium-priority">
+                            <strong>UI Components</strong>
+                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">Due: Next week</div>
+                            <span class="status-badge normal">Medium</span>
+                        </div>
+                        <div class="kanban-card low-priority">
+                            <strong>Documentation</strong>
+                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">Due: End of month</div>
+                            <span class="status-badge low">Low Priority</span>
+                        </div>
+                    </div>
+
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            🚧 In Progress <span style="background: #feebc8; color: #c05621; padding: 2px 8px; border-radius: 12px; font-size: 12px;">2</span>
+                        </div>
+                        <div class="kanban-card high-priority">
+                            <strong>Database Migration</strong>
+                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">Started 2 days ago</div>
+                            <span class="status-badge urgent">Critical</span>
+                        </div>
+                        <div class="kanban-card medium-priority">
+                            <strong>User Testing</strong>
+                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">50% complete</div>
+                            <span class="status-badge normal">Medium</span>
+                        </div>
+                    </div>
+
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            👀 Review <span style="background: #bee3f8; color: #2b6cb0; padding: 2px 8px; border-radius: 12px; font-size: 12px;">1</span>
+                        </div>
+                        <div class="kanban-card low-priority">
+                            <strong>Code Review</strong>
+                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">Awaiting feedback</div>
+                            <span class="status-badge normal">Review</span>
+                        </div>
+                    </div>
+
+                    <div class="kanban-column">
+                        <div class="kanban-header">
+                            ✅ Complete <span style="background: #c6f6d5; color: #2f855a; padding: 2px 8px; border-radius: 12px; font-size: 12px;">3</span>
+                        </div>
+                        <div class="kanban-card">
+                            <strong>Initial Setup</strong>
+                            <div style="font-size: 12px; color: #718096; margin-top: 5px;">Completed yesterday</div>
+                            <span class="status-badge low">Done</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar UI -->
+        <div class="ui-showcase" id="calendar-ui">
+            <div class="widget">
+                <h3>Monthly Calendar</h3>
+                <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
+                    <button style="background: none; border: none; font-size: 18px; cursor: pointer;" onclick="previousMonth()">‹</button>
+                    <h4 id="calendar-month">July 2025</h4>
+                    <button style="background: none; border: none; font-size: 18px; cursor: pointer;" onclick="nextMonth()">›</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Calendar days will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="widget">
+                <h3>Upcoming Events</h3>
+                <div style="space-y: 15px;">
+                    <div style="display: flex; align-items: center; padding: 15px; background: #f8fafc; border-radius: 12px; margin-bottom: 10px;">
+                        <div style="width: 12px; height: 12px; background: #667eea; border-radius: 50%; margin-right: 15px;"></div>
+                        <div>
+                            <strong>Team Standup</strong>
+                            <div style="font-size: 14px; color: #718096;">Today at 9:00 AM</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; padding: 15px; background: #f8fafc; border-radius: 12px; margin-bottom: 10px;">
+                        <div style="width: 12px; height: 12px; background: #ed8936; border-radius: 50%; margin-right: 15px;"></div>
+                        <div>
+                            <strong>Client Presentation</strong>
+                            <div style="font-size: 14px; color: #718096;">Tomorrow at 2:00 PM</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; padding: 15px; background: #f8fafc; border-radius: 12px;">
+                        <div style="width: 12px; height: 12px; background: #48bb78; border-radius: 50%; margin-right: 15px;"></div>
+                        <div>
+                            <strong>Project Review</strong>
+                            <div style="font-size: 14px; color: #718096;">Friday at 10:00 AM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget">
+                <h3>Week View</h3>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; margin-bottom: 15px;">
+                    <div style="font-weight: 600; color: #4a5568;">Mon</div>
+                    <div style="font-weight: 600; color: #4a5568;">Tue</div>
+                    <div style="font-weight: 600; color: #4a5568;">Wed</div>
+                    <div style="font-weight: 600; color: #4a5568;">Thu</div>
+                    <div style="font-weight: 600; color: #4a5568;">Fri</div>
+                    <div style="font-weight: 600; color: #4a5568;">Sat</div>
+                    <div style="font-weight: 600; color: #4a5568;">Sun</div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; height: 200px;">
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 8px; position: relative;">
+                        <div style="background: #667eea; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-bottom: 4px;">9 AM</div>
+                    </div>
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 8px;"></div>
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 8px;">
+                        <div style="background: #ed8936; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px;">2 PM</div>
+                    </div>
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 8px;"></div>
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 8px;">
+                        <div style="background: #48bb78; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px;">10 AM</div>
+                    </div>
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 8px;"></div>
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 8px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timer UI -->
+        <div class="ui-showcase" id="timer-ui">
+            <div class="widget">
+                <h3>Pomodoro Timer</h3>
+                <div class="time-display" id="pomodoro-timer">25:00</div>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="display: inline-flex; background: #f8fafc; border-radius: 20px; padding: 4px;">
+                        <button class="timer-btn" id="work-btn" style="background: #667eea; color: white;" onclick="setTimerMode('work')">Work</button>
+                        <button class="timer-btn" id="short-btn" style="background: transparent; color: #4a5568;" onclick="setTimerMode('short')">Short Break</button>
+                        <button class="timer-btn" id="long-btn" style="background: transparent; color: #4a5568;" onclick="setTimerMode('long')">Long Break</button>
+                    </div>
+                </div>
+                <div class="timer-controls">
+                    <button class="timer-btn primary" id="start-btn" onclick="startTimer()">Start</button>
+                    <button class="timer-btn secondary" onclick="pauseTimer()">Pause</button>
+                    <button class="timer-btn secondary" onclick="resetTimer()">Reset</button>
+                </div>
+            </div>
+
+            <div class="widget">
+                <h3>Time Tracking</h3>
+                <input type="text" class="add-input" id="task-input" placeholder="What are you working on?">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="add-btn" onclick="startTracking()">Start Tracking</button>
+                    <button class="timer-btn secondary" onclick="stopTracking()">Stop</button>
+                </div>
+                <div id="current-task" style="background: #e6fffa; padding: 15px; border-radius: 12px; margin-bottom: 20px; display: none;">
+                    <strong>Currently tracking:</strong>
+                    <div id="task-name" style="color: #2d3748; margin-top: 5px;"></div>
+                    <div id="task-time" style="color: #4a5568; font-size: 14px; margin-top: 5px;">00:00:00</div>
+                </div>
+                <div style="font-weight: 600; margin-bottom: 15px;">Today's Sessions</div>
+                <div id="time-entries">
+                    <div style="display: flex; justify-content: between; align-items: center; padding: 12px; background: #f8fafc; border-radius: 8px; margin-bottom: 8px;">
+                        <span>Design Review</span>
+                        <span style="font-weight: 600;">1h 23m</span>
+                    </div>
+                    <div style="display: flex; justify-content: between; align-items: center; padding: 12px; background: #f8fafc; border-radius: 8px; margin-bottom: 8px;">
+                        <span>Code Implementation</span>
+                        <span style="font-weight: 600;">2h 45m</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget">
+                <h3>Daily Goals</h3>
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+                        <span>Deep Work Sessions</span>
+                        <span style="font-weight: 600;">3 / 4</span>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px;">
+                        <div style="width: 75%; height: 100%; background: #667eea; border-radius: 4px; transition: width 0.3s ease;"></div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+                        <span>Exercise</span>
+                        <span style="font-weight: 600;">Completed ✓</span>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px;">
+                        <div style="width: 100%; height: 100%; background: #48bb78; border-radius: 4px;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+                        <span>Learning Time</span>
+                        <span style="font-weight: 600;">45m / 60m</span>
+                    </div>
+                    <div style="width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px;">
+                        <div style="width: 75%; height: 100%; background: #ed8936; border-radius: 4px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard UI -->
+        <div class="ui-showcase" id="dashboard-ui">
+            <div class="widget">
+                <h3>Productivity Overview</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 12px; color: white;">
+                        <div style="font-size: 2rem; font-weight: 700;">127</div>
+                        <div style="opacity: 0.9;">Tasks Completed</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background: linear-gradient(135deg, #48bb78, #38a169); border-radius: 12px; color: white;">
+                        <div style="font-size: 2rem; font-weight: 700;">42h</div>
+                        <div style="opacity: 0.9;">Focus Time</div>
+                    </div>
+                </div>
+                <div style="background: #f8fafc; padding: 20px; border-radius: 12px;">
+                    <div style="font-weight: 600; margin-bottom: 15px;">Weekly Progress</div>
+                    <div style="display: flex; justify-content: between; align-items: end; height: 100px; gap: 8px;">
+                        <div style="width: 20px; height: 60%; background: #667eea; border-radius: 4px 4px 0 0;"></div>
+                        <div style="width: 20px; height: 80%; background: #667eea; border-radius: 4px 4px 0 0;"></div>
+                        <div style="width: 20px; height: 45%; background: #667eea; border-radius: 4px 4px 0 0;"></div>
+                        <div style="width: 20px; height: 90%; background: #667eea; border-radius: 4px 4px 0 0;"></div>
+                        <div style="width: 20px; height: 70%; background: #667eea; border-radius: 4px 4px 0 0;"></div>
+                        <div style="width: 20px; height: 55%; background: #e2e8f0; border-radius: 4px 4px 0 0;"></div>
+                        <div style="width: 20px; height: 30%; background: #e2e8f0; border-radius: 4px 4px 0 0;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: between; font-size: 12px; color: #718096; margin-top: 8px;">
+                        <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget">
+                <h3>Time Distribution</h3>
+                <div style="position: relative; width: 200px; height: 200px; margin: 0 auto 20px;">
+                    <svg width="200" height="200" style="transform: rotate(-90deg);">
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#e2e8f0" stroke-width="20"></circle>
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#667eea" stroke-width="20" 
+                                stroke-dasharray="251.2" stroke-dashoffset="62.8" stroke-linecap="round"></circle>
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#48bb78" stroke-width="20" 
+                                stroke-dasharray="125.6" stroke-dashoffset="-62.8" stroke-linecap="round"></circle>
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#ed8936" stroke-width="20" 
+                                stroke-dasharray="62.8" stroke-dashoffset="-188.4" stroke-linecap="round"></circle>
+                    </svg>
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                        <div style="font-size: 1.5rem; font-weight: 700;">8.5h</div>
+                        <div style="font-size: 14px; color: #718096;">Total Time</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 12px; height: 12px; background: #667eea; border-radius: 50%;"></div>
+                        <span style="font-size: 14px;">Deep Work (5h)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 12px; height: 12px; background: #48bb78; border-radius: 50%;"></div>
+                        <span style="font-size: 14px;">Meetings (2h)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 12px; height: 12px; background: #ed8936; border-radius: 50%;"></div>
+                        <span style="font-size: 14px;">Admin (1.5h)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="width: 12px; height: 12px; background: #e2e8f0; border-radius: 50%;"></div>
+                        <span style="font-size: 14px;">Break</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget">
+                <h3>Achievement Streak</h3>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 3rem; margin-bottom: 10px;">🔥</div>
+                    <div style="font-size: 2rem; font-weight: 700; color: #667eea;">14 Days</div>
+                    <div style="color: #718096;">Current streak</div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 15px;">
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #48bb78; border-radius: 4px;"></div>
+                    <div style="aspect-ratio: 1; background: #667eea; border-radius: 4px; position: relative;">
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 10px; font-weight: bold;">!</div>
+                    </div>
+                </div>
+                <div style="background: #f0fff4; padding: 15px; border-radius: 12px; border-left: 4px solid #48bb78;">
+                    <strong style="color: #2f855a;">Keep it up!</strong>
+                    <div style="font-size: 14px; color: #2f855a; margin-top: 5px;">You're on track for your best month yet.</div>
+                </div>
+            </div>
+
+            <div class="widget">
+                <h3>Productivity Score</h3>
+                <div style="position: relative; margin-bottom: 20px;">
+                    <svg width="100%" height="120" viewBox="0 0 200 120">
+                        <defs>
+                            <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#667eea"/>
+                                <stop offset="100%" style="stop-color:#764ba2"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M 20 100 Q 100 20 180 100" stroke="#e2e8f0" stroke-width="8" fill="none" stroke-linecap="round"/>
+                        <path d="M 20 100 Q 100 20 140 60" stroke="url(#scoreGradient)" stroke-width="8" fill="none" stroke-linecap="round"/>
+                        <circle cx="140" cy="60" r="6" fill="#667eea"/>
+                    </svg>
+                    <div style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); text-align: center;">
+                        <div style="font-size: 2rem; font-weight: 700; color: #667eea;">87</div>
+                        <div style="font-size: 14px; color: #718096;">Productivity Score</div>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; text-align: center;">
+                    <div>
+                        <div style="font-weight: 600; color: #48bb78;">+12%</div>
+                        <div style="font-size: 12px; color: #718096;">vs last week</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; color: #ed8936;">94%</div>
+                        <div style="font-size: 12px; color: #718096;">completion rate</div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; color: #667eea;">6.2h</div>
+                        <div style="font-size: 12px; color: #718096;">avg daily focus</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state management
+        let currentUI = 'todo';
+        let timerState = {
+            isRunning: false,
+            currentTime: 1500, // 25 minutes in seconds
+            mode: 'work', // work, short, long
+            interval: null
+        };
+
+        let trackingState = {
+            isTracking: false,
+            startTime: null,
+            currentTask: '',
+            interval: null
+        };
+
+        // UI switching functionality
+        document.querySelectorAll('.ui-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const targetUI = this.dataset.ui;
+                switchUI(targetUI);
+            });
+        });
+
+        function switchUI(targetUI) {
+            // Update active UI option
+            document.querySelectorAll('.ui-option').forEach(opt => opt.classList.remove('active'));
+            document.querySelector(`[data-ui="${targetUI}"]`).classList.add('active');
+            
+            // Update active UI showcase
+            document.querySelectorAll('.ui-showcase').forEach(showcase => showcase.classList.remove('active'));
+            document.getElementById(`${targetUI}-ui`).classList.add('active');
+            
+            currentUI = targetUI;
+        }
+
+        // Todo List functionality
+        function addTodo() {
+            const input = document.getElementById('todo-input');
+            const todoText = input.value.trim();
+            
+            if (todoText) {
+                const todoList = document.getElementById('todo-list');
+                const todoItem = document.createElement('div');
+                todoItem.className = 'todo-item';
+                todoItem.innerHTML = `
+                    <div class="todo-checkbox" onclick="toggleTodo(this)"></div>
+                    <span>${todoText}</span>
+                `;
+                todoList.appendChild(todoItem);
+                input.value = '';
+                
+                // Add smooth animation
+                todoItem.style.opacity = '0';
+                todoItem.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    todoItem.style.transition = 'all 0.3s ease';
+                    todoItem.style.opacity = '1';
+                    todoItem.style.transform = 'translateY(0)';
+                }, 10);
+            }
+        }
+
+        function toggleTodo(checkbox) {
+            const todoItem = checkbox.parentElement;
+            const isCompleted = todoItem.classList.contains('completed');
+            
+            if (isCompleted) {
+                todoItem.classList.remove('completed');
+                checkbox.classList.remove('checked');
+            } else {
+                todoItem.classList.add('completed');
+                checkbox.classList.add('checked');
+            }
+        }
+
+        // Enter key support for todo input
+        document.getElementById('todo-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+
+        // Timer functionality
+        function setTimerMode(mode) {
+            const modes = {
+                work: { time: 1500, label: 'Work' }, // 25 minutes
+                short: { time: 300, label: 'Short Break' }, // 5 minutes  
+                long: { time: 900, label: 'Long Break' } // 15 minutes
+            };
+            
+            timerState.mode = mode;
+            timerState.currentTime = modes[mode].time;
+            updateTimerDisplay();
+            
+            // Update button states
+            document.querySelectorAll('#work-btn, #short-btn, #long-btn').forEach(btn => {
+                btn.style.background = 'transparent';
+                btn.style.color = '#4a5568';
+            });
+            document.getElementById(`${mode}-btn`).style.background = '#667eea';
+            document.getElementById(`${mode}-btn`).style.color = 'white';
+        }
+
+        function startTimer() {
+            if (!timerState.isRunning) {
+                timerState.isRunning = true;
+                document.getElementById('start-btn').textContent = 'Running...';
+                
+                timerState.interval = setInterval(() => {
+                    timerState.currentTime--;
+                    updateTimerDisplay();
+                    
+                    if (timerState.currentTime <= 0) {
+                        pauseTimer();
+                        playNotification();
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            timerState.isRunning = false;
+            clearInterval(timerState.interval);
+            document.getElementById('start-btn').textContent = 'Start';
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            setTimerMode(timerState.mode);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerState.currentTime / 60);
+            const seconds = timerState.currentTime % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('pomodoro-timer').textContent = display;
+        }
+
+        function playNotification() {
+            // Create audio notification (simple beep)
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+
+        // Time tracking functionality
+        function startTracking() {
+            const taskInput = document.getElementById('task-input');
+            const taskName = taskInput.value.trim();
+            
+            if (taskName && !trackingState.isTracking) {
+                trackingState.isTracking = true;
+                trackingState.startTime = Date.now();
+                trackingState.currentTask = taskName;
+                
+                document.getElementById('current-task').style.display = 'block';
+                document.getElementById('task-name').textContent = taskName;
+                
+                trackingState.interval = setInterval(updateTrackingDisplay, 1000);
+                taskInput.value = '';
+            }
+        }
+
+        function stopTracking() {
+            if (trackingState.isTracking) {
+                trackingState.isTracking = false;
+                clearInterval(trackingState.interval);
+                
+                const duration = Math.floor((Date.now() - trackingState.startTime) / 1000);
+                addTimeEntry(trackingState.currentTask, duration);
+                
+                document.getElementById('current-task').style.display = 'none';
+            }
+        }
+
+        function updateTrackingDisplay() {
+            if (trackingState.isTracking) {
+                const elapsed = Math.floor((Date.now() - trackingState.startTime) / 1000);
+                const hours = Math.floor(elapsed / 3600);
+                const minutes = Math.floor((elapsed % 3600) / 60);
+                const seconds = elapsed % 60;
+                
+                const display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                document.getElementById('task-time').textContent = display;
+            }
+        }
+
+        function addTimeEntry(taskName, duration) {
+            const hours = Math.floor(duration / 3600);
+            const minutes = Math.floor((duration % 3600) / 60);
+            const timeString = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+            
+            const entryDiv = document.createElement('div');
+            entryDiv.style.cssText = `
+                display: flex; 
+                justify-content: space-between; 
+                align-items: center; 
+                padding: 12px; 
+                background: #f8fafc; 
+                border-radius: 8px; 
+                margin-bottom: 8px;
+                opacity: 0;
+                transform: translateY(20px);
+            `;
+            entryDiv.innerHTML = `<span>${taskName}</span><span style="font-weight: 600;">${timeString}</span>`;
+            
+            const entriesContainer = document.getElementById('time-entries');
+            entriesContainer.insertBefore(entryDiv, entriesContainer.firstChild);
+            
+            // Animate in
+            setTimeout(() => {
+                entryDiv.style.transition = 'all 0.3s ease';
+                entryDiv.style.opacity = '1';
+                entryDiv.style.transform = 'translateY(0)';
+            }, 10);
+        }
+
+        // Calendar functionality
+        let currentDate = new Date();
+
+        function generateCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const monthYear = document.getElementById('calendar-month');
+            
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            monthYear.textContent = `${currentDate.toLocaleString('default', { month: 'long' })} ${year}`;
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startDate = new Date(firstDay);
+            startDate.setDate(startDate.getDate() - firstDay.getDay());
+            
+            grid.innerHTML = '';
+            
+            // Add day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.textContent = day;
+                dayHeader.style.cssText = 'font-weight: 600; color: #718096; text-align: center; padding: 8px;';
+                grid.appendChild(dayHeader);
+            });
+            
+            // Add calendar days
+            for (let i = 0; i < 42; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+                
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = date.getDate();
+                
+                if (date.getMonth() !== month) {
+                    dayElement.style.opacity = '0.3';
+                }
+                
+                if (date.toDateString() === new Date().toDateString()) {
+                    dayElement.classList.add('today');
+                }
+                
+                // Add some mock events
+                if ([3, 7, 15, 22, 28].includes(date.getDate()) && date.getMonth() === month) {
+                    dayElement.classList.add('has-event');
+                }
+                
+                grid.appendChild(dayElement);
+            }
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            generateCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            generateCalendar();
+        }
+
+        // Focus timer functionality  
+        let focusTimer = {
+            time: 1500, // 25 minutes
+            interval: null,
+            isRunning: false
+        };
+
+        function startFocusTimer() {
+            if (!focusTimer.isRunning) {
+                focusTimer.isRunning = true;
+                focusTimer.interval = setInterval(() => {
+                    focusTimer.time--;
+                    updateFocusDisplay();
+                    updateProgressRing();
+                    
+                    if (focusTimer.time <= 0) {
+                        pauseFocusTimer();
+                        playNotification();
+                    }
+                }, 1000);
+            }
+        }
+
+        function pauseFocusTimer() {
+            focusTimer.isRunning = false;
+            clearInterval(focusTimer.interval);
+        }
+
+        function updateFocusDisplay() {
+            const minutes = Math.floor(focusTimer.time / 60);
+            const seconds = focusTimer.time % 60;
+            document.getElementById('focus-timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateProgressRing() {
+            const progress = 1 - (focusTimer.time / 1500);
+            const circumference = 2 * Math.PI * 50;
+            const progressCircle = document.querySelector('.progress-ring-progress');
+            const dashArray = `${circumference * progress} ${circumference}`;
+            progressCircle.style.strokeDasharray = dashArray;
+        }
+
+        // Initialize calendar on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            generateCalendar();
+            
+            // Add smooth scroll behavior
+            document.documentElement.style.scrollBehavior = 'smooth';
+            
+            // Initialize timer displays
+            updateTimerDisplay();
+            updateFocusDisplay();
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        switchUI('todo');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        switchUI('kanban');
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        switchUI('calendar');
+                        break;
+                    case '4':
+                        e.preventDefault();
+                        switchUI('timer');
+                        break;
+                    case '5':
+                        e.preventDefault();
+                        switchUI('dashboard');
+                        break;
+                    case ' ':
+                        e.preventDefault();
+                        if (currentUI === 'timer') {
+                            timerState.isRunning ? pauseTimer() : startTimer();
+                        }
+                        break;
+                }
+            }
+        });
+
+        // Add task input for time tracking
+        document.getElementById('task-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startTracking();
+            }
+        });
+
+        // Animate elements on scroll
+        function animateOnScroll() {
+            const widgets = document.querySelectorAll('.widget');
+            
+            widgets.forEach(widget => {
+                const rect = widget.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 100) {
+                    widget.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                }
+            });
+        }
+
+        window.addEventListener('scroll', animateOnScroll);
+        window.addEventListener('load', animateOnScroll);
+    </script>
+</body>
+</html>
